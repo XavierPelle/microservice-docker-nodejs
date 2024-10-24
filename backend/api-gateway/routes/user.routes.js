@@ -1,4 +1,4 @@
-const userProxy = require('../middleware/proxy');
+const { userProxy } = require('../middleware/proxy');
 
 function userRoutes(app) {
   app.get('/users', userProxy);
