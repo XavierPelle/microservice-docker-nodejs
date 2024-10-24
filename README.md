@@ -33,7 +33,7 @@ For execute command into container (this part "//bin//sh" could be different on 
     
 ## Documentation
 
-You can use the API-GATEWAY on http://localhost:5000 and endpoint 
+You can use the API-GATEWAY on http://localhost:5000 endpoint 
 
 #### /users 
 for user-microservice
