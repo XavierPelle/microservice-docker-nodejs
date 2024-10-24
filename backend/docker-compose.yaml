@@ -43,6 +43,37 @@ services:
       - db_user-service  
     command: ["./wait-for-it.sh", "db_user-service", "--", "node", "./src/app.js"]
 
+  db_product-service:
+    container_name: db_product-service
+    image: postgres:13
+    restart: always
+    env_file:
+      - ./product-service/.env
+    environment:
+      POSTGRES_USER: main
+      POSTGRES_PASSWORD: FB1atQfXCPptY7I7BuMsAX91bGcTXx4R
+      POSTGRES_DB: db_product-service
+    ports:
+      - "3802:5433"
+    networks:
+      - microservice
+
+  product-service:
+    build:
+      context: ./product-service
+    container_name: product-service
+    env_file:
+      - ./product-service/.env
+    volumes:
+      - ./product-service:/usr/src/app  
+    ports:
+      - "5002:5002"
+    networks:
+      - microservice
+    depends_on:
+      - db_product-service  
+    command: ["./wait-for-it.sh", "db_product-service", "--", "node", "./src/app.js"]
+
 
 networks:
   microservice:

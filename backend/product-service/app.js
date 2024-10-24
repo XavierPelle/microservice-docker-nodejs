@@ -3,6 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser');  
 const cors = require('cors');
 const userRouter = require('./routes/user.route');
+const sequelize = require('./config/database');
 
 const app = express();
 const port = process.env.PORT || 5001;
