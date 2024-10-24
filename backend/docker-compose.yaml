@@ -1,0 +1,50 @@
+version: "3.8"
+
+services:
+  api-gateway:
+    build:
+      context: ./api-gateway
+    container_name: api-gateway
+    volumes:
+      - ./api-gateway:/usr/src/app  
+    ports:
+      - "5000:5000"
+    networks:
+      - microservice
+
+  db_user-service:
+    container_name: db_user-service
+    image: postgres:13
+    restart: always
+    env_file:
+      - ./user-service/.env
+    environment:
+      POSTGRES_USER: main
+      POSTGRES_PASSWORD: FB1atQfXCPptY7I7BuMsAX91bGcTXx4R
+      POSTGRES_DB: db_user-service
+    ports:
+      - "3801:5432"
+    networks:
+      - microservice
+
+  user-service:
+    build:
+      context: ./user-service
+    container_name: user-service
+    env_file:
+      - ./user-service/.env
+    volumes:
+      - ./user-service:/usr/src/app  
+    ports:
+      - "5001:5001"
+    networks:
+      - microservice
+    depends_on:
+      - db_user-service  
+    command: ["./wait-for-it.sh", "db_user-service", "--", "node", "./src/app.js"]
+
+
+networks:
+  microservice:
+    driver: bridge
+    external: true
