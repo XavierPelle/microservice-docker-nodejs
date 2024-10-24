@@ -1,10 +1,12 @@
 const express = require('express');
 const { userRoutes } = require('./routes/user.routes');
+const { productRoutes } = require('./routes/product.routes');
 
 const app = express();
 const port = 5000;
 
-userRoutes(app);
+userRoutes(app); 
+productRoutes(app);
 
 app.get('/', (req, res) => res.send('Gateway API'));
 
