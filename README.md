@@ -10,8 +10,6 @@ The aim of this project is to learn how to create an API in a Docker microservic
 
 ## Installation
 
-Install my-project with npm
-
 ```bash
   git clone https://github.com/XavierPelle/microservice-docker-nodejs
   cd microservice-docker-nodejs
