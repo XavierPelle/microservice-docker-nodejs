@@ -38,14 +38,14 @@ You can use the API-GATEWAY on http://localhost:5000/[endpoint]
 
 #### /users 
 
-GET /users for get all users
-POST /users/create for create user
-PUT /users/update/:id for update user
-DELETE /users/delete/:id for delete user
+- GET /users for get all users
+- POST /users/create for create user
+- PUT /users/update/:id for update user
+- DELETE /users/delete/:id for delete user
 
 #### /product
 
-GET /product for get all products
-POST /products/create for create product
-PUT /products/update/:id for update product
-DELETE /products/delete/:id for delete product
+- GET /product for get all products
+- POST /products/create for create product
+- PUT /products/update/:id for update product
+- DELETE /products/delete/:id for delete product
