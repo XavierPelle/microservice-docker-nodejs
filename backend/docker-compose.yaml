@@ -75,6 +75,38 @@ services:
     command: ["./wait-for-it.sh", "db_product-service", "--", "node", "./src/app.js"]
 
 
+  db_transaction-history-service:
+    container_name: db_transaction-history-service
+    image: postgres:13
+    restart: always
+    env_file:
+      - ./transaction-history-service/.env
+    environment:
+      POSTGRES_USER: main
+      POSTGRES_PASSWORD: FB1atQfXCPptY7I7BuMsAX91bGcTXx4R
+      POSTGRES_DB: db_transaction-history-service
+    ports:
+      - "3803:5434"
+    networks:
+      - microservice
+
+  transaction-history-service:
+    build:
+      context: ./transaction-history-service
+    container_name: transaction-history-service
+    env_file:
+      - ./transaction-history-service/.env
+    volumes:
+      - ./transaction-history-service:/usr/src/app  
+    ports:
+      - "5003:5003"
+    networks:
+      - microservice
+    depends_on:
+      - db_transaction-history-service 
+    command: ["./wait-for-it.sh", "db_transaction-history-service", "--", "node", "./src/app.js"]
+
+
 networks:
   microservice:
     driver: bridge
