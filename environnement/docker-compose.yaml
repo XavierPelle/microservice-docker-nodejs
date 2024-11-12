@@ -3,10 +3,10 @@ version: "3.8"
 services:
   api-gateway:
     build:
-      context: ./api-gateway
+      context: ../backend/api-gateway
     container_name: api-gateway
     volumes:
-      - ./api-gateway:/usr/src/app  
+      - ../backend/api-gateway:/usr/src/app  
     ports:
       - "5000:5000"
     networks:
@@ -17,7 +17,7 @@ services:
     image: postgres:13
     restart: always
     env_file:
-      - ./user-service/.env
+      - ../backend/user-service/.env
     environment:
       POSTGRES_USER: main
       POSTGRES_PASSWORD: FB1atQfXCPptY7I7BuMsAX91bGcTXx4R
@@ -29,12 +29,12 @@ services:
 
   user-service:
     build:
-      context: ./user-service
+      context: ../backend/user-service
     container_name: user-service
     env_file:
-      - ./user-service/.env
+      - ../backend/user-service/.env
     volumes:
-      - ./user-service:/usr/src/app  
+      - ../backend/user-service:/usr/src/app  
     ports:
       - "5001:5001"
     networks:
@@ -48,7 +48,7 @@ services:
     image: postgres:13
     restart: always
     env_file:
-      - ./product-service/.env
+      - ../backend/product-service/.env
     environment:
       POSTGRES_USER: main
       POSTGRES_PASSWORD: FB1atQfXCPptY7I7BuMsAX91bGcTXx4R
@@ -60,12 +60,12 @@ services:
 
   product-service:
     build:
-      context: ./product-service
+      context: ../backend/product-service
     container_name: product-service
     env_file:
-      - ./product-service/.env
+      - ../backend/product-service/.env
     volumes:
-      - ./product-service:/usr/src/app  
+      - ../backend/product-service:/usr/src/app  
     ports:
       - "5002:5002"
     networks:
@@ -80,7 +80,7 @@ services:
     image: postgres:13
     restart: always
     env_file:
-      - ./transaction-history-service/.env
+      - ../backend/transaction-history-service/.env
     environment:
       POSTGRES_USER: main
       POSTGRES_PASSWORD: FB1atQfXCPptY7I7BuMsAX91bGcTXx4R
@@ -92,12 +92,12 @@ services:
 
   transaction-history-service:
     build:
-      context: ./transaction-history-service
+      context: ../backend/transaction-history-service
     container_name: transaction-history-service
     env_file:
-      - ./transaction-history-service/.env
+      - ../backend/transaction-history-service/.env
     volumes:
-      - ./transaction-history-service:/usr/src/app  
+      - ../backend/transaction-history-service:/usr/src/app  
     ports:
       - "5003:5003"
     networks:
@@ -106,6 +106,18 @@ services:
       - db_transaction-history-service 
     command: ["./wait-for-it.sh", "db_transaction-history-service", "--", "node", "./src/app.js"]
 
+  angular:
+    container_name: angular
+    build:
+      context: ../frontend/
+      dockerfile: Dockerfile
+    ports:
+      - 4200:4200
+    volumes:
+      - ../frontend:/usr/src/app  
+    networks:
+      - microservice
+    restart: always
 
 networks:
   microservice:
