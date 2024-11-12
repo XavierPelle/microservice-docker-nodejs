@@ -49,3 +49,10 @@ You can use the API-GATEWAY on http://localhost:5000/[endpoint]
 - POST /products/create for create product
 - PUT /products/update/:id for update product
 - DELETE /products/delete/:id for delete product
+
+#### /transaction-history
+
+The history works as follows: when a product is created, we add a row to the database with the "Achat” data, and when we delete it, we do the same thing, but with “Vente”. We still need to define the case for “Echange”.
+
+- GET /transaction-history for get all history
+- POST /products/create for create a new entry in history
