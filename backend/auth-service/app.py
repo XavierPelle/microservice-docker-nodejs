@@ -9,7 +9,7 @@ SECRET_KEY = 'CODE007'
 
 users = {}
 
-TARGET_URL = 'http://user-service:5001//users/create'
+TARGET_URL = 'http://user-service:5001/users/create'
 
 # Utilisez le décorateur before_request pour appeler avant chaque requête
 @app.before_request
@@ -54,12 +54,12 @@ def register():
         'lastName': lastName,
         'email': email,
         'password': hashed_password,
-        'salt': salt,
-        'role': role  # Ajouter le rôle de l'utilisateur
+        'salt': salt
     }
 
     users[email] = user_info
     try:
+        print(TARGET_URL)
         response = requests.post(TARGET_URL, json=user_info)
         
         # Vérifier la réponse du serveur cible
