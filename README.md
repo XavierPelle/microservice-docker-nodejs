@@ -56,3 +56,8 @@ The history works as follows: when a product is created, we add a row to the dat
 
 - GET /transaction-history for get all history
 - POST /products/create for create a new entry in history
+
+## Front-end
+
+You can access the front-end of the application at http://localhost:4200
+The front-end is generated at the same time as the back-end by the docker-compose located in the environment folder.
