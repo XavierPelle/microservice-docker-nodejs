@@ -20,6 +20,10 @@ User.init({
         type: DataTypes.STRING,
         allowNull: true,
     },
+    salt: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    }
 }, {
     sequelize,
     modelName: 'User',
