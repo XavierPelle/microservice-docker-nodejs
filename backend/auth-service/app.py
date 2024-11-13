@@ -1,13 +1,15 @@
 from flask import Flask, request, jsonify, g
 from flask_bcrypt import Bcrypt
 from auth import create_jwt, before_request, generate_salt, verify_jwt # Assurez-vous que auth.py est dans le même répertoire
-
+import requests
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
 
 SECRET_KEY = 'CODE007'
-# Simuler une base de données d'utilisateurs
+
 users = {}
+
+TARGET_URL = 'http://user-service:5001//users/create'
 
 # Utilisez le décorateur before_request pour appeler avant chaque requête
 @app.before_request
@@ -57,7 +59,20 @@ def register():
     }
 
     users[email] = user_info
-    return jsonify({'message': 'Utilisateur créé', 'user': user_info}), 201
+    try:
+        response = requests.post(TARGET_URL, json=user_info)
+        
+        # Vérifier la réponse du serveur cible
+        if response.status_code == 200:
+            return jsonify({'message': 'Utilisateur créé et données envoyées', 'user': user_info}), 201
+        else:
+            return jsonify({'message': 'Utilisateur créé, mais erreur lors de l\'envoi des données', 'error': response.text}), 400
+    except requests.exceptions.RequestException as e:
+        # En cas d'erreur avec la requête HTTP
+        return jsonify({'message': 'Erreur de connexion avec le service cible', 'error': str(e)}), 500
+
+    
+    
 
 @app.route('/login', methods=['POST'])
 def login():
