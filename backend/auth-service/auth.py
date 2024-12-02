@@ -67,16 +67,30 @@ def verify_jwt(jwt, secret_key):
         print(f"Erreur lors de la vérification du token: {e}")
         return None
 
-# Décorateur avant la requête pour vérifier le JWT
+def proof_of_work(data, difficulty=3):
+    nonce = 0
+    target = '0' * difficulty 
+    
+    while True:
+        data_n = f"{data}{nonce}".encode('utf-8') 
+        hash_result = hashlib.sha256(data_n).hexdigest()  
+        
+        if hash_result.startswith(target):  
+            return nonce, hash_result  
+        nonce += 1
+        if nonce % 1000 == 0: 
+            time.sleep(0.1)
+
+
+
 @app.before_request
 def before_request():
     token = request.headers.get('Authorization')
     if token:
-        token = token.split(" ")[1]  # Extraire le token après 'Bearer'
+        token = token.split(" ")[1]  
         decoded = verify_jwt(token, SECRET_KEY)
         if decoded:
-            g.user = decoded  # Stocker l'utilisateur dans g pour l'accès facile
+            g.user = decoded  
         else:
-            g.user = None  # Si le token est invalide ou expiré, aucun utilisateur n'est défini
-    else:
+            g.user = None  
         g.user = None
