@@ -10,4 +10,6 @@ COPY . .
 
 EXPOSE 5000
 
-ENTRYPOINT ["tail", "-f", "/dev/null"]
+#ENTRYPOINT ["tail", "-f", "/dev/null"]
+
+CMD ["node", "app.js"]

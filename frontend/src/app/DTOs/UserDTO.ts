@@ -3,6 +3,7 @@ export interface UserSignupDTO {
     lastName: string;
     email: string;
     password: string;
+    salt: string;
 }
 
 export interface UserSigninDTO {

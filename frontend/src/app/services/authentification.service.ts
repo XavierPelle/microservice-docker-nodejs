@@ -12,8 +12,12 @@ export class AuthentificationService {
 
   constructor(private http: HttpClient) {}
   
-  register(data: UserSignupDTO): Observable<UserSignupDTO>{
-    return this.http.post<UserSignupDTO>(`${this.apiUrl}/users/create`, data);
+  register(email: String, firstName: String, lastName: String): Observable<UserSignupDTO>{
+    return this.http.post<UserSignupDTO>(`${this.apiUrl}/users/create`, {email,firstName,lastName});
+  }
+
+  sendHashedPassword(userEmail: string, hashedPassword: string) {
+    return this.http.post(`${this.apiUrl}/register`, { userEmail, hashedPassword });
   }
 
   login(data: UserSigninDTO): Observable<UserSigninDTO> {
