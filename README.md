@@ -13,7 +13,7 @@ The aim of this project is to learn how to create an API in a Docker microservic
 ```bash
   git clone https://github.com/XavierPelle/microservice-docker-nodejs
   cd microservice-docker-nodejs
-  cd backend 
+  cd environnement 
 ```
 you need to create .env in each microservice for the database.
 
