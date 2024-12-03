@@ -28,11 +28,10 @@ def generate_header():
     return base64.urlsafe_b64encode(json.dumps(header).encode()).decode().rstrip("=")
 
 # Fonction pour générer le payload du JWT
-def generate_payload(user_id, email, role):
+def generate_payload(user_id, email):
     payload = {
         "sub": user_id, 
         "email": email,
-        "role": role,
         "exp": int(time.time()) + 3600  # Expiration dans 1 heure
     }
     return base64.urlsafe_b64encode(json.dumps(payload).encode()).decode().rstrip("=")
@@ -44,9 +43,9 @@ def generate_signature(header_b64, payload_b64, secret_key):
     return base64.urlsafe_b64encode(signature).decode().rstrip("=")
 
 # Fonction pour créer un JWT
-def create_jwt(user_id, email, role, secret_key):
+def create_jwt(user_id, email,  secret_key):
     header_b64 = generate_header()
-    payload_b64 = generate_payload(user_id, email, role)
+    payload_b64 = generate_payload(user_id, email)
     signature = generate_signature(header_b64, payload_b64, secret_key)
     jwt = f"{header_b64}.{payload_b64}.{signature}"
     return jwt
