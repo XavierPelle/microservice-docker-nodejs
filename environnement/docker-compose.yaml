@@ -74,7 +74,6 @@ services:
       - db_product-service  
     command: ["./wait-for-it.sh", "db_product-service", "--", "node", "./src/app.js"]
 
-
   db_transaction-history-service:
     container_name: db_transaction-history-service
     image: postgres:13
@@ -130,7 +129,40 @@ services:
       - microservice
     restart: always
 
+  db_promotion-service:
+    container_name: db_promotion-service
+    image: mongo:4.4
+    restart: always
+    environment:
+      MONGO_INITDB_DATABASE: promotion-service
+    ports:
+      - "3804:27017"
+    volumes:
+      - promotion-service-data:/data/db
+    networks:
+      - microservice
+
+  promotion-service:
+    build:
+      context: ../backend/promotion-service
+    container_name: promotion-service
+    env_file:
+      - ../backend/promotion-service/.env
+    volumes:
+      - ../backend/promotion-service:/usr/src/app  
+    ports:
+      - "5005:5005"
+    networks:
+      - microservice
+    depends_on:
+      - db_promotion-service
+    environment:
+      - MONGODB_URI=mongodb://db_promotion-service:27017/promotion-service
+
 networks:
   microservice:
     driver: bridge
     external: true
+
+volumes:
+  promotion-service-data:
