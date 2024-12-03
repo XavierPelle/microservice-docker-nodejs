@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { AuthentificationService } from '../services/authentification.service';
 import { UserSignupDTO } from '../DTOs/UserDTO';
 import * as bcrypt from "bcryptjs";
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -13,32 +14,22 @@ import * as bcrypt from "bcryptjs";
 })
 export class RegisterComponent {
   
-  constructor(private authentificationService: AuthentificationService) {}
+  constructor(private authentificationService: AuthentificationService, private router: Router) {}
 
   user: UserSignupDTO = {
     firstName: '',
     lastName: '',
     email: '',
     password: '',
-    salt:''
   };
 
   register() {
     this.authentificationService.register(this.user.email, this.user.firstName, this.user.lastName).subscribe({
       next: async (response) => {
-        console.log(this.user.password, response.salt);
-        const hashedPassword = await bcrypt.hash(this.user.password, 10/*JSON.stringify(response.salt)*/); // L'auth service renvoie le salt en fonction du 
+        //console.log(this.user.password, response.salt);
+        const hashedPassword = await bcrypt.hash(this.user.password, 64);
         console.log(hashedPassword);
-        /*
-        this.authentificationService.sendHashedPassword(response.email, hashedPassword).subscribe({
-          next: (response) => {
-            console.log('Mot de passe hashé envoyé avec succès', response);
-          },
-          error: (err) => {
-            console.error('Erreur lors de l\'envoi du mot de passe hashé', err);
-          }
-        });
-        */
+        this.router.navigate(["login"]);
       },
       error: (err) => {
         console.error('Erreur lors de l\'inscription', err);

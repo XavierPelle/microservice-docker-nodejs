@@ -13,14 +13,14 @@ export class AuthentificationService {
   constructor(private http: HttpClient) {}
   
   register(email: String, firstName: String, lastName: String): Observable<UserSignupDTO>{
-    return this.http.post<UserSignupDTO>(`${this.apiUrl}/users/create`, {email,firstName,lastName});
+    return this.http.post<UserSignupDTO>(`${this.apiUrl}/register`, {email,firstName,lastName});
   }
 
   sendHashedPassword(userEmail: string, hashedPassword: string) {
-    return this.http.post(`${this.apiUrl}/register`, { userEmail, hashedPassword });
+    return this.http.post(`${this.apiUrl}/register/hashedpassword`, { userEmail, hashedPassword });
   }
 
-  login(data: UserSigninDTO): Observable<UserSigninDTO> {
-    return this.http.post<UserSigninDTO>(`${this.apiUrl}/login`, data);
+  login(email: String): Observable<UserSigninDTO> {
+    return this.http.post<UserSigninDTO>(`${this.apiUrl}/login`, email);
   }
 }
