@@ -11,6 +11,7 @@ users = {}
 
 TARGET_URL_USER = 'http://user-service:5001/users/create'
 TARGET_URL_UPDATE = 'http://user-service:5001/users/'
+TARGET_URL_GET = 'http://user-service:5001/users/'
 
 
 @app.before_request
@@ -40,23 +41,16 @@ def register():
     lastName = data.get('lastName')
     email = data.get('email')
     password = data.get('password')
-    role = data.get('role', 'user')
+    
 
     # Vérifie si l'utilisateur existe déjà dans la "base de données"
     if email in users:
         return jsonify({'message': 'Utilisateur déjà existant'}), 400
     
-    # Calcule le nonce et le proofHash que le client doit résoudre
-    proof_nonce, proof_hash = get_proof_of_work(password)  
 
-    # Envoie le nonce et proofHash au client pour qu'il les renvoie après avoir résolu le challenge
-    response_data = {
-        'nonce': proof_nonce,
-        'proofHash': proof_hash
-    }
 
     # Génération du sel pour le mot de passe
-    #salt = generate_salt()
+    salt = generate_salt()
 
     # Applique le sel au mot de passe
     #salted_password = password + salt
@@ -67,28 +61,62 @@ def register():
         'firstName': firstName,
         'lastName': lastName,
         'email': email,
-        'password': password,
-        'nonce': proof_nonce,
-        'proofHash': proof_hash,
-        #'salt': salt
+        'password': "",
+        'salt': salt
+    }
+
+    salt = {
+        'salt': salt
     }
 
     users[email] = user_info
         
-    #return jsonify({'message': 'Utilisateur créé et données envoyées', 'user': user_info, 'proof': response_data}), 201
+    return jsonify({'message': 'Utilisateur créé et données envoyées', 'user': user_info, 'sel':salt}), 201
+    
    
-   
-       
-    response = requests.post(TARGET_URL_USER, json=user_info)
 
        
-    if response.status_code == 200:
-         return jsonify({'message': 'Utilisateur créé et données envoyées', 'user': user_info, 'proof': response_data}), 201
+    #response = requests.post(TARGET_URL_USER, json=user_info)
+
+       
+    # if response.status_code == 200:
+    #      return jsonify({'message': 'Utilisateur créé et données envoyées', 'user': user_info, 'proof': response_data, 'sel':salt}), 201
             
-    else:
-          return jsonify({'message': 'Utilisateur créé, mais erreur lors de l\'envoi des données', 'error': response.text}), 400
+    # else:
+    #       return jsonify({'message': 'Utilisateur créé, mais erreur lors de l\'envoi des données', 'error': response.text, 'sel':salt}), 400
    
        
+@app.route('/register_up', methods=['PUT'])
+def register_up():
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password')
+
+
+    # # Calcule le nonce et le proofHash que le client doit résoudre
+    # proof_nonce, proof_hash = get_proof_of_work(password)  
+
+    # # Envoie le nonce et proofHash au client pour qu'il les renvoie après avoir résolu le challenge
+    # response_data = {
+    #     'nonce': proof_nonce,
+    #     'proofHash': proof_hash
+    # }
+    user_info = {
+        'email': email,
+        'password': password,
+        #'nonce': proof_nonce,
+        #'proofHash': proof_hash,       
+    }
+    users[email] = user_info
+    #response = requests.post(TARGET_URL_UPDATE, json=user_info)
+
+    return jsonify({'message': 'Utilisateur créé et données envoyées', 'user': user_info}), 201
+
+    #if response.status_code == 200:
+         #return jsonify({'message': 'Utilisateur créé et données envoyées', 'user': user_info}), 201
+            
+    #else:
+          #return jsonify({'message': 'Utilisateur créé, mais erreur lors de l\'envoi des données', 'error': response.text}), 400
 
 
 # @app.route('/verify_register', methods=['POST'])
@@ -114,49 +142,27 @@ def register():
 #         return jsonify({"message": "Utilisateur non trouvé"}), 404
 
 
-# @app.route('/login', methods=['POST'])
-# def login():
-#     data = request.get_json()
-#     email = data.get('email')
-#     password = data.get('password')
-
-#     # Vérifier si l'utilisateur existe dans le dictionnaire
-#     user = users.get(email)
-
-#     if user:
-#         salted_password = password + user['salt']
-
-#         # Vérifier si le mot de passe est correct
-#         if bcrypt.check_password_hash(user['password'], salted_password):
-#             # Créer un JWT
-#             token = create_jwt(email, email, user['role'], SECRET_KEY)
-#             return jsonify({"access_token": token}), 200
-#         else:
-#             return jsonify({"message": "Nom d'utilisateur ou mot de passe incorrect"}), 401
-#     else:
-#         return jsonify({"message": "Utilisateur non trouvé"}), 404
-    
-
 @app.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
     email = data.get('email')
     password = data.get('password')
-    proof_nonce = data.get('nonce')
-    proof_hash = data.get('proofHash')
+ 
 
+    user_info = {
+        'email': email,
+        'password': password
+            
+    }
+    users[email] = user_info
 
     # Vérifier si l'utilisateur existe dans le dictionnaire
     user = users.get(email)
 
     if user:
-        expected_nonce = user['nonce']
-        expected_hash = user['proofHash']
 
-        
-
-        # Vérifier si le nonce et le prh est correct
-        if proof_nonce != expected_nonce or proof_hash != expected_hash:
+        # Vérifier si le mot de passe est correct
+        if bcrypt.check_password_hash(user['password'], password):
             # Créer un JWT
             token = create_jwt(email, email, SECRET_KEY)
             return jsonify({"access_token": token}), 200
@@ -164,6 +170,61 @@ def login():
             return jsonify({"message": "Nom d'utilisateur ou mot de passe incorrect"}), 401
     else:
         return jsonify({"message": "Utilisateur non trouvé"}), 404
+    
+
+@app.route('/login_send', methods=['GET'])
+def login_send():
+    data = request.get_json()
+    email = data.get('email')
+    
+    
+    url = 'http://user-service:5001/users/{email}'
+
+
+    response = requests.get(url)
+
+    if response.status_code == 200:
+        data = response.json()
+        salt = data.get('salt')
+        return jsonify({"Sel": salt}), 200
+    else:
+        return jsonify({"status": "error", "message": response.json()}), response.status_code
+
+
+
+    # # Vérifier si l'utilisateur existe dans le dictionnaire
+    # user = users.get(email)
+    
+    # if user:
+    #     salt = user['salt']
+    #     return jsonify({"message": salt}), 401
+    # else:
+    #     return jsonify({"message": "Utilisateur non trouvé"}), 404
+    
+
+# @app.route('/login', methods=['POST'])
+# def login():
+#     data = request.get_json()
+#     email = data.get('email')
+#     #password = data.get('password')
+#     proof_nonce = data.get('nonce')
+#     proof_hash = data.get('proofHash')
+
+
+#     # Vérifier si l'utilisateur existe dans le dictionnaire
+#     user = users.get(email)
+
+#     if user:
+
+#          expected_nonce = user['nonce']
+#          expected_hash = user['proofHash']
+
+#          if proof_nonce != expected_nonce or proof_hash != expected_hash:
+#              return jsonify({"message": "Preuve de travail invalide"}), 400
+#          #token = create_jwt(email, email, SECRET_KEY)
+#          return jsonify({"access_token"}), 200
+#     else:
+#          return jsonify({"message": "Utilisateur non trouvé"}), 404
 
 
 # Route protégée
