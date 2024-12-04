@@ -12,15 +12,28 @@ export class AuthentificationService {
 
   constructor(private http: HttpClient) {}
   
-  register(email: String, firstName: String, lastName: String): Observable<UserSignupDTO>{
-    return this.http.post<UserSignupDTO>(`${this.apiUrl}/register`, {email,firstName,lastName});
+  registerWithoutPassword(email: string, firstName: string, lastName: string): Observable<string> {
+    return this.http.post<string>(`${this.apiUrl}/register/withoutpassword`, { email, firstName, lastName });
   }
 
-  sendHashedPassword(userEmail: string, hashedPassword: string) {
+  sendHashedPassword(userEmail: string, hashedPassword: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/register/hashedpassword`, { userEmail, hashedPassword });
   }
 
   login(email: String): Observable<UserSigninDTO> {
-    return this.http.post<UserSigninDTO>(`${this.apiUrl}/login`, email);
+    return this.http.post<UserSigninDTO>(`${this.apiUrl}/login/salt`, email);
+  }
+
+  loginWithPassword(email: string, hashedPassword: string): Observable<UserSigninDTO> {
+    return this.http.post<UserSigninDTO>(`${this.apiUrl}/login`, { email, password: hashedPassword });
+  }
+  
+
+  async hashPassword(password: string, salt: string): Promise<string> {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(password + salt);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
   }
 }

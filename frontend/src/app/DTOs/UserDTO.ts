@@ -8,4 +8,5 @@ export interface UserSignupDTO {
 export interface UserSigninDTO {
     email: string;
     password: string;
+    salt: string;
 }
