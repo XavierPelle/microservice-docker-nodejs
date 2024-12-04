@@ -59,7 +59,8 @@ const deleteUser = async (req, res) => {
 
 const updateUserByEmail = async (req, res) => {
   try {
-    const email = req.params.email;
+    const email = req.body.email;
+    console.log(req.body)
     await User.update(req.body, { where: { email: email } });
     res.status(200).json({ message: "User updated !" });
   } catch (err) {

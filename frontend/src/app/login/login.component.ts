@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { UserSigninDTO } from '../DTOs/UserDTO';
 import { AuthentificationService } from '../services/authentification.service';
 import { FormsModule } from '@angular/forms';
+import * as bcrypt from "bcryptjs";
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -16,17 +18,32 @@ export class LoginComponent {
 
   user: UserSigninDTO = {
     email: '',
-    password: ''
+    password: '',
+    salt: '',
   };
 
   login() {
-    this.authentificationService.login(this.user).subscribe({
-      next: (data: UserSigninDTO) => {
-        console.log('Connexion réussie', data);
+    this.authentificationService.login(this.user.email).subscribe({
+      next: (response: UserSigninDTO) => {
+        if (response && response.salt) {
+          this.authentificationService.hashPassword(this.user.password, response.salt).then(hashedPassword => {
+            this.authentificationService.loginWithPassword(this.user.email, hashedPassword).subscribe({
+              next: (loginResponse) => {
+                console.log('Connexion réussie', loginResponse);
+              },
+              error: (loginError) => {
+                console.error('Erreur lors de la connexion avec le mot de passe haché', loginError);
+              }
+            });
+          });
+        } else {
+          console.error('Le sel n\'a pas été reçu du serveur');
+        }
       },
       error: (err) => {
-        console.error('Erreur lors de la connexion', err);
+        console.error('Erreur lors de la récupération du sel', err);
       }
     });
   }
+  
 }

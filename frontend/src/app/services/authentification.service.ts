@@ -12,11 +12,50 @@ export class AuthentificationService {
 
   constructor(private http: HttpClient) {}
   
-  register(data: UserSignupDTO): Observable<UserSignupDTO>{
-    return this.http.post<UserSignupDTO>(`${this.apiUrl}/users/create`, data);
+  registerWithoutPassword(email: string, firstName: string, lastName: string): Observable<UserSignupDTO> {
+    return this.http.post<UserSignupDTO>(`${this.apiUrl}/register`, { email, firstName, lastName });
   }
 
-  login(data: UserSigninDTO): Observable<UserSigninDTO> {
-    return this.http.post<UserSigninDTO>(`${this.apiUrl}/login`, data);
+  sendHashedPassword(email: string, password: string): Observable<UserSignupDTO> {
+    return this.http.post<UserSignupDTO>(`${this.apiUrl}/register_up`, { email, password });
   }
-}
+
+  login(email: String): Observable<UserSigninDTO> {
+    return this.http.post<UserSigninDTO>(`${this.apiUrl}/login_send`, {email});
+  }
+
+  loginWithPassword(email: string, password: string): Observable<UserSigninDTO> {
+    return this.http.post<UserSigninDTO>(`${this.apiUrl}/login`, { email, password: password });
+  }
+  
+
+  async hashPassword(password: string, salt: string): Promise<string> {
+    const encoder = new TextEncoder();
+    const passwordData = encoder.encode(password);
+    const saltData = encoder.encode(salt);
+  
+    const keyMaterial = await crypto.subtle.importKey(
+      'raw',
+      passwordData,
+      { name: 'PBKDF2' },
+      false,
+      ['deriveBits']
+    );
+  
+    const derivedBits = await crypto.subtle.deriveBits(
+      {
+        name: 'PBKDF2',
+        salt: saltData,
+        iterations: 100000,
+        hash: 'SHA-256'
+      },
+      keyMaterial,
+      256
+    );
+  
+    const hashArray = Array.from(new Uint8Array(derivedBits));
+    const hashedPassword = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    return hashedPassword;
+  }
+  
+}  

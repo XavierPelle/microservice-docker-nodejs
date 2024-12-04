@@ -11,6 +11,7 @@ services:
       - "5000:5000"
     networks:
       - microservice
+    command: ["sh", "./start.sh"]
 
   db_user-service:
     container_name: db_user-service
@@ -41,7 +42,7 @@ services:
       - microservice
     depends_on:
       - db_user-service  
-    command: ["./wait-for-it.sh", "db_user-service", "--", "node", "./src/app.js"]
+    command: ["sh", "./start.sh", "db_user-service"]
 
   db_product-service:
     container_name: db_product-service
@@ -72,7 +73,7 @@ services:
       - microservice
     depends_on:
       - db_product-service  
-    command: ["./wait-for-it.sh", "db_product-service", "--", "node", "./src/app.js"]
+    command: ["sh", "./start.sh", "db_product-service"]
 
 
   db_transaction-history-service:
@@ -104,7 +105,7 @@ services:
       - microservice
     depends_on:
       - db_transaction-history-service 
-    command: ["./wait-for-it.sh", "db_transaction-history-service", "--", "node", "./src/app.js"]
+    command: ["sh", "./start.sh", "db_transaction-history-service"]
 
   auth-service:
     build:

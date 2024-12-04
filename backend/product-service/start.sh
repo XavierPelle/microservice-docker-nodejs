@@ -11,4 +11,8 @@ until pg_isready -h "$host"; do
 done
 
 >&2 echo "Postgres is up - executing command"
-exec $cmd
+
+npm install
+
+node src/app.js
+
