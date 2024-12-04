@@ -11,6 +11,7 @@ users = {}
 
 TARGET_URL_USER = 'http://user-service:5001/users/create'
 TARGET_URL_UPDATE = 'http://user-service:5001/users/'
+TARGET_URL_GET = 'http://user-service:5001/users/'
 
 
 @app.before_request
@@ -175,17 +176,30 @@ def login():
 def login_send():
     data = request.get_json()
     email = data.get('email')
-    password = data.get('password')
     
     
-    # Vérifier si l'utilisateur existe dans le dictionnaire
-    user = users.get(email)
-    
-    if user:
-        salt = user['salt']
-        return jsonify({"message": salt}), 401
+    url = 'http://user-service:5001/users/{email}'
+
+
+    response = requests.get(url)
+
+    if response.status_code == 200:
+        data = response.json()
+        salt = data.get('salt')
+        return jsonify({"Sel": salt}), 200
     else:
-        return jsonify({"message": "Utilisateur non trouvé"}), 404
+        return jsonify({"status": "error", "message": response.json()}), response.status_code
+
+
+
+    # # Vérifier si l'utilisateur existe dans le dictionnaire
+    # user = users.get(email)
+    
+    # if user:
+    #     salt = user['salt']
+    #     return jsonify({"message": salt}), 401
+    # else:
+    #     return jsonify({"message": "Utilisateur non trouvé"}), 404
     
 
 # @app.route('/login', methods=['POST'])

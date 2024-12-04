@@ -18,6 +18,24 @@ const createUser = async (req, res) => {
     }
   };
 
+
+const getUserByEmail = async (req, res) => {
+  const { email } = req.params;
+
+  try {
+    const user = await User.findOne({ where: { email } });
+
+    if (!user) {
+      return res.status(404).json({ message: 'Utilisateur non trouvé' });
+    }
+
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: 'Erreur lors de la récupération de l\'utilisateur' });
+  }
+};
+
+
 const updateUser = async (req, res) => {
   try {
       const id = req.params.id;
@@ -51,6 +69,7 @@ const updateUserByEmail = async (req, res) => {
 
   module.exports = {
     getAll,
+    getUserByEmail,
     createUser,
     updateUser,
     deleteUser,
