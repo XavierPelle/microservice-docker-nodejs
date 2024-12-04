@@ -17,7 +17,8 @@ export class RegisterComponent {
     firstName: '',
     lastName: '',
     email: '',
-    password: ''
+    password: '',
+    salt: ''
   };
 
   constructor(
@@ -31,17 +32,22 @@ export class RegisterComponent {
       this.user.firstName,
       this.user.lastName
     ).subscribe({
-      next: (salt) => {
-        this.authentificationService.hashPassword(this.user.password, salt).then(hashedPassword => {
-          this.authentificationService.sendHashedPassword(this.user.email, hashedPassword).subscribe({
-            next: () => {
-              this.router.navigate(["login"]);
-            },
-            error: (err) => {
-              console.error('Erreur lors de l\'envoi du mot de passe haché', err);
-            }
+      next: (response: UserSignupDTO) => {
+        if (response && response.salt) {
+          this.authentificationService.hashPassword(this.user.password, response.salt).then(hashedPassword => {
+            this.authentificationService.sendHashedPassword(this.user.email, hashedPassword).subscribe({
+              next: (registerResponse) => {
+                console.log('Inscription réussie', registerResponse);
+                this.router.navigate(["login"]);
+              },
+              error: (registerError) => {
+                console.error('Erreur lors de l\'envoi du mot de passe haché', registerError);
+              }
+            });
           });
-        });
+        } else {
+          console.error('Le sel n\'a pas été reçu du serveur');
+        }
       },
       error: (err) => {
         console.error('Erreur lors de l\'inscription initiale', err);

@@ -9,5 +9,3 @@ COPY package*.json ./
 COPY . .
 
 EXPOSE 5003
-
-CMD ["npm","i"]

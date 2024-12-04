@@ -12,28 +12,50 @@ export class AuthentificationService {
 
   constructor(private http: HttpClient) {}
   
-  registerWithoutPassword(email: string, firstName: string, lastName: string): Observable<string> {
-    return this.http.post<string>(`${this.apiUrl}/register/withoutpassword`, { email, firstName, lastName });
+  registerWithoutPassword(email: string, firstName: string, lastName: string): Observable<UserSignupDTO> {
+    return this.http.post<UserSignupDTO>(`${this.apiUrl}/register`, { email, firstName, lastName });
   }
 
-  sendHashedPassword(userEmail: string, hashedPassword: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/register/hashedpassword`, { userEmail, hashedPassword });
+  sendHashedPassword(email: string, password: string): Observable<UserSignupDTO> {
+    return this.http.post<UserSignupDTO>(`${this.apiUrl}/register_up`, { email, password });
   }
 
   login(email: String): Observable<UserSigninDTO> {
-    return this.http.post<UserSigninDTO>(`${this.apiUrl}/login/salt`, email);
+    return this.http.post<UserSigninDTO>(`${this.apiUrl}/login_send`, {email});
   }
 
-  loginWithPassword(email: string, hashedPassword: string): Observable<UserSigninDTO> {
-    return this.http.post<UserSigninDTO>(`${this.apiUrl}/login`, { email, password: hashedPassword });
+  loginWithPassword(email: string, password: string): Observable<UserSigninDTO> {
+    return this.http.post<UserSigninDTO>(`${this.apiUrl}/login`, { email, password: password });
   }
   
 
   async hashPassword(password: string, salt: string): Promise<string> {
     const encoder = new TextEncoder();
-    const data = encoder.encode(password + salt);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    const passwordData = encoder.encode(password);
+    const saltData = encoder.encode(salt);
+  
+    const keyMaterial = await crypto.subtle.importKey(
+      'raw',
+      passwordData,
+      { name: 'PBKDF2' },
+      false,
+      ['deriveBits']
+    );
+  
+    const derivedBits = await crypto.subtle.deriveBits(
+      {
+        name: 'PBKDF2',
+        salt: saltData,
+        iterations: 100000,
+        hash: 'SHA-256'
+      },
+      keyMaterial,
+      256
+    );
+  
+    const hashArray = Array.from(new Uint8Array(derivedBits));
+    const hashedPassword = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    return hashedPassword;
   }
-}
+  
+}  
