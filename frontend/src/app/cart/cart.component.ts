@@ -42,7 +42,7 @@ export class CartComponent {
     }
   }
 
-  addToCart(product: Product): void {
+  addToCart(product: Cart): void {
     this.cartService.addToCard(product).subscribe({
       next: () => {
         console.log('Ajout au panier réussi'+ JSON.stringify(product));
