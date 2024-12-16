@@ -14,8 +14,8 @@ TransactionHistory.init({
         type: DataTypes.STRING(30),
         allowNull: false,
     },
-    productId: {
-        type: DataTypes.INTEGER,
+    productReference: {
+        type: DataTypes.STRING(20),
         allowNull: false,
     },
     productName: {
