@@ -14,5 +14,5 @@ done
 
 npm install
 
-node src/app.js
+npx ts-node src/app.ts 
 

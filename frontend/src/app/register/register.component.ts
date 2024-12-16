@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AuthentificationService } from '../services/authentification.service';
-import { UserSignupDTO } from '../DTOs/UserDTO';
+import { UserSignupDTO } from '../models/user';
 import { Router } from '@angular/router';
 
 @Component({

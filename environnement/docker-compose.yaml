@@ -136,6 +136,7 @@ services:
       - microservice
     depends_on:
       - db_cart-service 
+    command: ["sh", "./start.sh", "db_cart-service"]
 
   auth-service:
     build:

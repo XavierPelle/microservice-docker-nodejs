@@ -4,6 +4,10 @@ import sequelize from '../config/database';
 class Cart extends Model {}
 
 Cart.init({
+    name: {
+        type: DataTypes.STRING(100),
+        allowNull: false,
+    },
     productReference: {
         type: DataTypes.STRING(20),
         allowNull: false,

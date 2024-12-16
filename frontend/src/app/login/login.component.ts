@@ -1,9 +1,7 @@
 import { Component } from '@angular/core';
-import { UserSigninDTO } from '../DTOs/UserDTO';
+import { UserSigninDTO } from '../models/user';
 import { AuthentificationService } from '../services/authentification.service';
 import { FormsModule } from '@angular/forms';
-import * as bcrypt from "bcryptjs";
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
