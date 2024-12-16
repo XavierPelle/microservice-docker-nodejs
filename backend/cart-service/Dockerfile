@@ -6,6 +6,4 @@ WORKDIR /usr/src/app
 
 COPY package*.json ./
 
-EXPOSE 5001
-
-ENTRYPOINT ["tail", "-f", "/dev/null"]
+EXPOSE 5005

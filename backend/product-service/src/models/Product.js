@@ -20,10 +20,6 @@ Product.init({
         type: DataTypes.STRING(20),
         allowNull: false,
     },
-    shopName: {
-        type: DataTypes.STRING(50),
-        allowNull: true,
-    },
 }, {
     sequelize,
     modelName: 'Product',

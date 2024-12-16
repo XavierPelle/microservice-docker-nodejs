@@ -7,7 +7,7 @@ import cartRouter from './routes/card.route';
 dotenv.config();
 
 const app: Application = express();
-const port: number = parseInt(process.env.PORT || '5005', 10);
+const port = process.env.PORT;
 
 app.use(express.json());
 app.use(bodyParser.json());
