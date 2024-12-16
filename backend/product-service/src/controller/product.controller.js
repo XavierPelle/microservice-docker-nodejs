@@ -16,7 +16,7 @@ const getAll = async (req, res) => {
           const product = await Product.create(req.body);
           const data = {
               transactionType: "Achat",
-              productId: product.id,
+              productReference: product.productReference,
               productName: req.body.name,
               price: req.body.price,
           };
@@ -48,7 +48,7 @@ const updateProduct = async (req, res) => {
         }
         const data = {
             transactionType: "Vente",
-            productId: product.id,
+            productReference: product.productReference,
             productName: product.name,
             price: product.price,
         };

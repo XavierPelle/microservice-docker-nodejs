@@ -16,6 +16,10 @@ Product.init({
         type: DataTypes.FLOAT,
         allowNull: false,
     },
+    productReference: {
+        type: DataTypes.STRING(20),
+        allowNull: false,
+    },
     shopName: {
         type: DataTypes.STRING(50),
         allowNull: true,

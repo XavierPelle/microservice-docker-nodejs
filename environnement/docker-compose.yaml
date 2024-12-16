@@ -107,6 +107,36 @@ services:
       - db_transaction-history-service 
     command: ["sh", "./start.sh", "db_transaction-history-service"]
 
+  db_cart-service:
+    container_name: db_cart-service
+    image: postgres:13
+    restart: always
+    env_file:
+      - ../backend/cart-service/.env
+    environment:
+      POSTGRES_USER: main
+      POSTGRES_PASSWORD: FB1atQfXCPptY7I7BuMsAX91bGcTXx4R
+      POSTGRES_DB: db_cart-service
+    ports:
+      - "3804:5435"
+    networks:
+      - microservice
+
+  cart-service:
+    build:
+      context: ../backend/cart-service
+    container_name: cart-service
+    env_file:
+      - ../backend/cart-service/.env
+    volumes:
+      - ../backend/cart-service:/usr/src/app  
+    ports:
+      - "5005:5005"
+    networks:
+      - microservice
+    depends_on:
+      - db_cart-service 
+
   auth-service:
     build:
       context: ../backend/auth-service
