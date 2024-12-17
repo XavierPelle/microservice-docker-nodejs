@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { UserSigninDTO } from '../models/user';
 import { AuthentificationService } from '../services/authentification.service';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -12,12 +13,13 @@ import { FormsModule } from '@angular/forms';
 })
 export class LoginComponent {
   
-  constructor(private authentificationService: AuthentificationService) {}
+  constructor(private authentificationService: AuthentificationService, private router: Router) {}
 
   user: UserSigninDTO = {
     email: '',
     password: '',
     salt: '',
+    access_token: ''
   };
 
   login() {
@@ -27,7 +29,8 @@ export class LoginComponent {
           this.authentificationService.hashPassword(this.user.password, response.salt).then(hashedPassword => {
             this.authentificationService.loginWithPassword(this.user.email, hashedPassword).subscribe({
               next: (loginResponse) => {
-                console.log('Connexion réussie', loginResponse);
+                localStorage.setItem('access_token', loginResponse.access_token);
+                this.router.navigate(['/cart']);
               },
               error: (loginError) => {
                 console.error('Erreur lors de la connexion avec le mot de passe haché', loginError);
@@ -35,13 +38,12 @@ export class LoginComponent {
             });
           });
         } else {
-          console.error('Le sel n\'a pas été reçu du serveur');
+          console.error('L\'email et le mot de passe ne corresponds pas');
         }
       },
       error: (err) => {
-        console.error('Erreur lors de la récupération du sel', err);
+        console.error('Email incorrect', err);
       }
     });
   }
-  
 }
