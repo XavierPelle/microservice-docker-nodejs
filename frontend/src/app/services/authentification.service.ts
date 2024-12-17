@@ -2,6 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { UserSigninDTO, UserSignupDTO } from '../models/user';
+import { JwtHelperService } from '@auth0/angular-jwt';
+import { environment } from '../../environments/environment.development'; 
+
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +13,7 @@ export class AuthentificationService {
 
   private apiUrl = 'http://localhost:5000';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient,private jwtHelper: JwtHelperService) {}
   
   registerWithoutPassword(email: string, firstName: string, lastName: string): Observable<UserSignupDTO> {
     return this.http.post<UserSignupDTO>(`${this.apiUrl}/register`, { email, firstName, lastName });
@@ -58,4 +61,41 @@ export class AuthentificationService {
     return hashedPassword;
   }
   
+  isAuthenticated(): boolean {
+      const token = this.getToken();
+      if (!token) return false;
+
+      try {
+          if (this.jwtHelper.isTokenExpired(token)) return false;
+          const decodedToken = this.decodeToken(token);
+          if (!decodedToken) return false;
+          return true;
+      } catch (error) {
+          console.error('Erreur lors de la vérification du token', error);
+          return false;
+      }
+  }
+
+  decodeToken(token: string): any {
+    try {
+        const decodedToken = this.jwtHelper.decodeToken(token);
+      
+        if (decodedToken.iss !== environment.JWT_ISS || 
+            decodedToken.aud !== environment.JWT_AUD) {
+            throw new Error('Token non valide');
+        }
+        return decodedToken;
+    } catch (error) {
+        console.error('Erreur lors du décodage du token', error);
+        return null;
+    }
+  }
+
+  getToken(): string {
+    return localStorage.getItem('access_token') ?? '';
+  }
+
+  logout(): void {
+    localStorage.removeItem('access_token');
+  }
 }  

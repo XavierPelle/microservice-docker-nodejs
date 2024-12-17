@@ -2,6 +2,9 @@ from flask import Flask, request, jsonify, g
 from flask_bcrypt import Bcrypt
 from auth import create_jwt, generate_salt, verify_jwt, proof_of_work
 import requests
+import jwt
+from datetime import datetime, timedelta
+import uuid
 
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
@@ -116,50 +119,51 @@ def register_up():
 #         return jsonify({"message": "Utilisateur non trouvé"}), 404
 
 
+SECRET_KEY = "<Eta6t5^3*w/64UR(1#+wux`BhCd5C[nG744KA.,tsVH$_%Ure\.2lUPA("  
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
+
 @app.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
     email = data.get('email')
     password = data.get('password')
- 
 
-    user_info = {
-        'email': email,
-        'password': password
-            
-    }
-    users[email] = user_info
+    if not email or not password:
+        return jsonify({"error": "Email et mot de passe requis"}), 400
 
-    # Vérifier si l'utilisateur existe dans le dictionnaire
-    user = users.get(email)
-
-    url = 'http://user-service:5001/users/{}'.format(email)
-
+    url = f'http://user-service:5001/users/{email}'
     response = requests.get(url)
-    data = response.json()
-    passwordfrombdd = data.get('password')
     
-    print(passwordfrombdd)
-    
-    print(password)
+    if response.status_code != 200:
+        return jsonify({"error": "Erreur lors de la vérification de l'utilisateur"}), 500
 
-    if password == passwordfrombdd :
-        token = create_jwt(email, email, SECRET_KEY)
-        return jsonify({"access_token": token}), 200
-    else:
-        return jsonify({"message": "Nom d'utilisateur ou mot de passe incorrect"}), 401
-    #if user:
+    user_data = response.json()
+    password_from_db = user_data.get('password')
+    user_first_name = user_data.get('firstName')
+    user_last_name = user_data.get('lastName')
+    user_id = user_data.get('id')
 
-        # Vérifier si le mot de passe est correct
-        #if bcrypt.check_password_hash(user['password'], password):
-            # Créer un JWT
-            #token = create_jwt(email, email, SECRET_KEY)
-            #return jsonify({"access_token": token}), 200
-        #else:
-            #return jsonify({"message": "Nom d'utilisateur ou mot de passe incorrect"}), 401
-    #else:
-        #return jsonify({"message": "Utilisateur non trouvé"}), 404
-    
+    if password != password_from_db:
+        return jsonify({"error": "Nom d'utilisateur ou mot de passe incorrect"}), 401
+
+    token_data = {
+        "id": user_id,
+        "email": email,
+        "firstName": user_first_name,
+        "lastName": user_last_name,
+        "iat": datetime.utcnow(),
+        "exp": datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES),
+        "iss": "c51009d1917d9cb04c4c6dad300ea122fc28182144cd7b22af9bd67a8bfd3888",
+        "aud": "a264ce8262a7ccac5abd25fe5498762901108fd4b7b11d751e25b15a8c560707"
+    }
+
+    try:
+        token = jwt.encode(token_data, SECRET_KEY, algorithm=ALGORITHM)
+    except Exception as e:
+        return jsonify({"error": f"Erreur lors de la création du token : {str(e)}"}), 500
+
+    return jsonify({"access_token": token,}), 200
 
 @app.route('/login_send', methods=['POST'])
 def login_send():
