@@ -9,4 +9,7 @@ router.put("/update/:id", controller.updateProduct);
 router.delete("/delete/:id", controller.deleteProduct);
 router.get("/fakedata", controller.createFakeProduct);
 
+
+router.get("/:id", controller.getProductById);
+
 module.exports = router;

@@ -9,6 +9,21 @@ const getAll = async (req, res) => {
     }
   };
 
+  const getTransactionById = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const transaction = await TransactionHistory.findByPk(id);
+
+        if (!transaction) {
+            return res.status(404).json({ message: "Transaction non trouvé " });
+        }
+
+        res.json(transaction);
+    } catch (error) {
+        res.status(500).json({ message: 'Echecs de la recuperation de la transation..' });
+    }
+};
+
 const createTransaction = async (req, res) => {
     try {
       const transactionHistory = await TransactionHistory.create(req.body);
@@ -20,5 +35,6 @@ const createTransaction = async (req, res) => {
 
   module.exports = {
     getAll,
+    getTransactionById,
     createTransaction,
   }

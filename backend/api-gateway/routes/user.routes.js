@@ -5,6 +5,9 @@ function userRoutes(app) {
   app.post('/users/create', userProxy);
   app.put('/users/update/:id', userProxy);
   app.delete('/users/delete/:id', userProxy);
+
+
+  app.get('/users/:id', userProxy);
 }
 
 module.exports = { userRoutes };
