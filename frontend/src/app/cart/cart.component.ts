@@ -1,9 +1,8 @@
-import { Component } from '@angular/core';
-import { ProductService } from '../services/product.service';
-import { Product } from '../models/product';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CartService } from '../services/cart.service';
 import { Cart } from '../models/cart';
+import { AuthentificationService } from '../services/authentification.service';
 
 @Component({
   selector: 'app-cart',
@@ -12,44 +11,42 @@ import { Cart } from '../models/cart';
   templateUrl: './cart.component.html',
   styleUrl: './cart.component.scss'
 })
-export class CartComponent {
+export class CartComponent implements OnInit {
 
-  productList: Product[] = [];
+  cart: Cart[] = [];
 
-  constructor(
-    private productService: ProductService,
-    private cartService: CartService
-  ) {}
+  constructor(private cartService: CartService, private authService: AuthentificationService) {}
 
   ngOnInit(): void {
-    this.productService.getProduct().subscribe({
+    const token = this.authService.getToken();
+    const decodedToken = this.authService.decodeToken(token)
+    const userId = decodedToken.id;
+    this.cartService.getCart(userId).subscribe({
       next: data => {
-        this.productList = data.map(product => ({...product, quantity: 1}));
+        console.log(data)
+        this.cart = data;
       },
       error: () => {
-        console.error('Erreur lors du chargement des produits');
+        console.error('Erreur lors du chargement du panier');
       },
     });
   }
-
-  increaseQuantity(cart: Cart): void {
-    cart.quantity = (cart.quantity || 1) + 1;
-  }
-
-  decreaseQuantity(cart: Cart): void {
-    if (cart.quantity && cart.quantity > 1) {
-      cart.quantity--;
-    }
-  }
-
-  addToCart(product: Cart): void {
-    this.cartService.addToCard(product).subscribe({
-      next: () => {
-        console.log('Ajout au panier réussi'+ JSON.stringify(product));
+  removeFromCart(cart: Cart): void {
+    this.cartService.deleteItemCart(cart.id_cart).subscribe({
+      next:() => {
+        console.log('gg')
       },
       error: () => {
-        console.error('Erreur lors de l\'ajout au panier');
-      }
+        console.error('Erreur lors du chargement du panier');
+      },
     });
+  }
+  
+  calculateTotal(): number {
+    return this.cart.reduce((total, item) => total + (item.price * (item.quantity || 1)), 0);
+  }
+
+  buy(): void {
+    console.log('Achat effectué', this.cart);
   }
 }

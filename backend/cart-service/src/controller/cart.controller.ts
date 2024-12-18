@@ -10,6 +10,22 @@ const getAll = async (req: Request, res: Response): Promise<void> => {
     }
 };
 
+const getById = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { id } = req.params;
+        const cart = await Cart.findAll({ where: { user_id: id } });
+        
+        if (!cart) {
+            res.status(404).json({ message: 'Cart not found' });
+            return;
+        }
+        
+        res.json(cart);
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to fetch cart' });
+    }
+};
+
 const createCart = async (req: Request, res: Response): Promise<void> => {
     try {
         const card = await Cart.create(req.body);
@@ -53,4 +69,5 @@ export {
     createCart,
     updateCart,
     deleteCart,
+    getById
 };
