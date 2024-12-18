@@ -1,21 +1,22 @@
 <div class="container">
-    <div *ngIf="productList.length === 0" class="empty-cart">
-      <p>Your cart is empty.</p>
-    </div>
-    
-    <div class="product-grid">
-      <div *ngFor="let product of productList" class="product-card">
-        <h3>{{ product.name }}</h3>
-        <p class="price">{{ product.price | currency }}</p>
-        <p class="description">{{ product.description }}</p>
-        <p class="reference">Ref: {{ product.productReference }}</p>
-        <div class="quantity-control">
-            <button class='add-btn'(click)="decreaseQuantity(product)">-</button>
-            <span>{{ product.quantity || 1 }}</span>
-            <button class='add-btn' (click)="increaseQuantity(product)">+</button>
-          </div>
-        <button class="remove-btn" (click)="addToCart(product)">Ajouter au panier</button>
+  <h2>Votre Panier</h2>
+  <div *ngIf="cart.length === 0" class="empty-cart">
+    Votre panier est vide.
+  </div>
+  <div *ngIf="cart.length > 0" class="cart-items">
+    <div *ngFor="let item of cart" class="cart-item">
+      <div class="item-details">
+        <h3>{{ item.name }}</h3>
+        <p class="price">{{ item.price | currency:'EUR' }}</p>
+        <p class="quantity">Quantités: {{ item.quantity }}</p>
+        <p class="reference">Ref: {{ item.productReference }}</p>
       </div>
+      <p class="item-total">{{ item.price * item.quantity | currency:'EUR' }}</p>
+      <button class="remove-btn" (click)="removeFromCart(item)">Supprimer</button>
     </div>
   </div>
-  
+  <div *ngIf="cart.length > 0" class="cart-summary">
+    <p class="total">Total: {{ calculateTotal() | currency:'EUR' }}</p>
+    <button (click)="buy()" class="checkout-btn">Passer la commande</button>
+  </div>
+</div>

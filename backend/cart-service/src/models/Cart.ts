@@ -4,6 +4,11 @@ import sequelize from '../config/database';
 class Cart extends Model {}
 
 Cart.init({
+    id_cart: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true, 
+    },
     name: {
         type: DataTypes.STRING(100),
         allowNull: false,
@@ -20,6 +25,10 @@ Cart.init({
         type: DataTypes.INTEGER(),
         allowNull: true,
     },
+    user_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    }
 }, {
     sequelize,
     modelName: 'Cart',

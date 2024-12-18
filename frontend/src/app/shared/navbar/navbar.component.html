@@ -4,7 +4,8 @@
         <a href="/">Projet Anuel</a>
       </div>
       <div class="navbar__auth">
-        <a *ngIf="isLoggedIn()" href="/cart" class="navbar__link navbar__link--login">Produits</a>
+        <a *ngIf="isLoggedIn()" href="/cart" class="navbar__link navbar__link--login">Panier</a>
+        <a *ngIf="isLoggedIn()" href="/product" class="navbar__link navbar__link--login">Produits</a>
         <a *ngIf="isLoggedIn()" (click)="logout()" class="navbar__link navbar__link--signout">Déconnexion</a>
         <a *ngIf="!isLoggedIn()" href="/login" class="navbar__link navbar__link--login">Connexion</a>
         <a *ngIf="!isLoggedIn()" href="/register" class="navbar__link navbar__link--signup">Inscription</a>
