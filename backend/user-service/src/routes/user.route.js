@@ -10,4 +10,6 @@ router.put("/update/email/:email", controller.updateUserByEmail);
 router.put("/update/:id", controller.updateUser);
 router.delete("/delete/:id", controller.deleteUser);
 
+router.get("/id/:id", controller.getUserById);
+
 module.exports = router;

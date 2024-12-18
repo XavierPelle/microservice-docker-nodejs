@@ -6,6 +6,9 @@ function productRoutes(app) {
   app.put('/product/update/:id', productProxy);
   app.delete('/product/delete/:id', productProxy);
   app.get('/product/fakedata', productProxy);
+
+ 
+  app.get('/product/:id', productProxy);
 }
 
 module.exports = { productRoutes };
