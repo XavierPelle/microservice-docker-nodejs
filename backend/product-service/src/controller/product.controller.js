@@ -11,6 +11,22 @@ const getAll = async (req, res) => {
     }
   };
 
+  const getProductById = async (req, res) => {
+    try {
+      const id = req.params.id;
+      const product = await Product.findByPk(id);
+
+      if (!product) {
+          return res.status(404).json({ message: "Produit introuvable"})
+      }
+      res.json(product);
+      
+    } catch (error) {
+      res.status(500).json({ message: 'Échec de la récupération du produit..' });
+      
+    }
+  };
+
   const createProduct = async (req, res) => {
       try {
           const product = await Product.create(req.body);
@@ -108,6 +124,7 @@ const createFakeProduct = async (req, res) => {
 
   module.exports = {
     getAll,
+    getProductById,
     createProduct,
     updateProduct,
     deleteProduct,
