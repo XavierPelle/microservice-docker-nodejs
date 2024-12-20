@@ -5,6 +5,7 @@ const { productRoutes } = require('./routes/product.routes');
 const { transactionHistoryRoutes } = require('./routes/transactionHistory.route');
 const { authRoutes } = require('./routes/auth.route');
 const { cartRoutes } = require('./routes/cart.route');
+const { tokenRoutes } = require('./routes/token.route');
 
 const app = express();
 const port = 5000;
@@ -22,6 +23,7 @@ productRoutes(app);
 transactionHistoryRoutes(app);
 authRoutes(app);
 cartRoutes(app);
+tokenRoutes(app);
 
 
 app.get('/', (req, res) => res.send('Gateway API'));

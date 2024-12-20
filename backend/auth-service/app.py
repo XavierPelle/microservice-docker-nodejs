@@ -118,11 +118,6 @@ def register_up():
 #     else:
 #         return jsonify({"message": "Utilisateur non trouvé"}), 404
 
-
-SECRET_KEY = "<Eta6t5^3*w/64UR(1#+wux`BhCd5C[nG744KA.,tsVH$_%Ure\.2lUPA("  
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
-
 @app.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
@@ -148,22 +143,21 @@ def login():
         return jsonify({"error": "Nom d'utilisateur ou mot de passe incorrect"}), 401
 
     token_data = {
-        "id": user_id,
+        "user_id": user_id,
         "email": email,
         "firstName": user_first_name,
         "lastName": user_last_name,
-        "iat": datetime.utcnow(),
-        "exp": datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES),
-        "iss": "c51009d1917d9cb04c4c6dad300ea122fc28182144cd7b22af9bd67a8bfd3888",
-        "aud": "a264ce8262a7ccac5abd25fe5498762901108fd4b7b11d751e25b15a8c560707"
     }
+    token_api_url = 'http://token-service:8101/add-token'
+    token_response = requests.post(token_api_url, json=token_data)
 
-    try:
-        token = jwt.encode(token_data, SECRET_KEY, algorithm=ALGORITHM)
-    except Exception as e:
-        return jsonify({"error": f"Erreur lors de la création du token : {str(e)}"}), 500
+    if token_response.status_code != 200:
+        return jsonify({"error": "Erreur lors de la génération du token"}), 500
 
-    return jsonify({"access_token": token,}), 200
+    token = token_response.json().get('token')
+
+    return jsonify({"access_token": token}), 200
+
 
 @app.route('/login_send', methods=['POST'])
 def login_send():

@@ -4,4 +4,5 @@ module.exports = {
   TRANSACTION_HISTOY_API_URL: 'http://transaction-history-service:5003',
   AUTH_API_URL: 'http://auth-service:5004',
   CART_API_URL: 'http://cart-service:5005',
+  TOKEN_API_URL: 'http://token-service:8101',
 }
