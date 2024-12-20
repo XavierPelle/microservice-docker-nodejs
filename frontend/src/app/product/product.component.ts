@@ -2,11 +2,9 @@ import { Component } from '@angular/core';
 import { Product } from '../models/product';
 import { ProductService } from '../services/product.service';
 import { CartService } from '../services/cart.service';
-import { Cart } from '../models/cart';
 import { CommonModule } from '@angular/common';
 import { AuthentificationService } from '../services/authentification.service';
-import { switchMap } from 'rxjs';
-import { Token } from '../models/token'
+import { RequestBuilderService } from '../services/request-builder.service';
 
 @Component({
   selector: 'app-product',
@@ -22,10 +20,20 @@ export class ProductComponent {
   constructor(
     private productService: ProductService,
     private cartService: CartService,
-    private authService: AuthentificationService
+    private authService: AuthentificationService,
+    private requestBuilderService: RequestBuilderService
   ) {}
 
   ngOnInit(): void {
+    this.requestBuilderService.execute('get','/product').subscribe({
+      next: data => {
+        this.productList = data.map((product: any) => ({...product, quantity: 1}));
+      },
+      error: () => {
+        console.error('Erreur lors du chargement des produits');
+      },
+    });
+    /*
     this.productService.getProduct().subscribe({
       next: data => {
         this.productList = data.map(product => ({...product, quantity: 1}));
@@ -34,6 +42,7 @@ export class ProductComponent {
         console.error('Erreur lors du chargement des produits');
       },
     });
+    */
   }
 
   increaseQuantity(cart: Product): void {
@@ -49,7 +58,7 @@ export class ProductComponent {
   addToCart(product: Product): void {
     const userInfo = this.authService.getUserInfo();
     const productWithUserId = { ...product, user_id: userInfo.user_id };
-    this.cartService.addToCart(productWithUserId).subscribe({
+    this.requestBuilderService.execute('post','/cart/create', productWithUserId).subscribe({
       next: () => {
         console.log('Ajout au panier réussi', productWithUserId);
       },
