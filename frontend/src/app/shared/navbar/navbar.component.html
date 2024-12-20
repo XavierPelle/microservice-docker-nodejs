@@ -1,14 +1,14 @@
 <nav class="navbar">
     <div class="navbar__container">
       <div class="navbar__logo">
-        <a href="/">Projet Anuel</a>
+        <a routerLink="/">Projet Anuel</a>
       </div>
       <div class="navbar__auth">
-        <a *ngIf="isLoggedIn()" href="/cart" class="navbar__link navbar__link--login">Panier</a>
-        <a *ngIf="isLoggedIn()" href="/product" class="navbar__link navbar__link--login">Produits</a>
+        <a *ngIf="isLoggedIn()" routerLink="/cart" class="navbar__link navbar__link--login">Panier</a>
+        <a *ngIf="isLoggedIn()" routerLink="/product" class="navbar__link navbar__link--login">Produits</a>
         <a *ngIf="isLoggedIn()" (click)="logout()" class="navbar__link navbar__link--signout">Déconnexion</a>
-        <a *ngIf="!isLoggedIn()" href="/login" class="navbar__link navbar__link--login">Connexion</a>
-        <a *ngIf="!isLoggedIn()" href="/register" class="navbar__link navbar__link--signup">Inscription</a>
+        <a *ngIf="!isLoggedIn()" routerLink="/login" class="navbar__link navbar__link--login">Connexion</a>
+        <a *ngIf="!isLoggedIn()" routerLink="/register" class="navbar__link navbar__link--signup">Inscription</a>
       </div>
     </div>
   </nav>

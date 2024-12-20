@@ -36,21 +36,19 @@ export class ProductComponent {
     });
   }
 
-  increaseQuantity(cart: Cart): void {
+  increaseQuantity(cart: Product): void {
     cart.quantity = (cart.quantity || 1) + 1;
   }
 
-  decreaseQuantity(cart: Cart): void {
+  decreaseQuantity(cart: Product): void {
     if (cart.quantity && cart.quantity > 1) {
       cart.quantity--;
     }
   }
 
   addToCart(product: Product): void {
-    const token = this.authService.getToken();
-    const decodedToken = this.authService.decodeToken(token)
-    const userId = decodedToken.id;
-    const productWithUserId = { ...product, user_id: userId };
+    const userInfo = this.authService.getUserInfo();
+    const productWithUserId = { ...product, user_id: userInfo.user_id };
     this.cartService.addToCart(productWithUserId).subscribe({
       next: () => {
         console.log('Ajout au panier réussi', productWithUserId);

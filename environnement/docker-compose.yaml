@@ -149,6 +149,28 @@ services:
     networks:
       - microservice
 
+  token-service:
+    build: 
+      context: ../backend/token-service
+    container_name: token-service
+    ports:
+      - "8101:8101"
+    volumes:
+      - ../backend/token-service/api:/var/www/html
+    depends_on:
+      - db_token-service
+    networks:
+      - microservice
+
+  db_token-service:
+    image: mysql:8.0-oracle
+    container_name: token-service-db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: testdb
+    networks:
+      - microservice
+
   angular:
     container_name: angular
     build:

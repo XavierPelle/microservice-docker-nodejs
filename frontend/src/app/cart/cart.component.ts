@@ -18,10 +18,8 @@ export class CartComponent implements OnInit {
   constructor(private cartService: CartService, private authService: AuthentificationService) {}
 
   ngOnInit(): void {
-    const token = this.authService.getToken();
-    const decodedToken = this.authService.decodeToken(token)
-    const userId = decodedToken.id;
-    this.cartService.getCart(userId).subscribe({
+    const userInfo = this.authService.getUserInfo();
+    this.cartService.getCart(userInfo.user_id).subscribe({
       next: data => {
         console.log(data)
         this.cart = data;
@@ -34,10 +32,10 @@ export class CartComponent implements OnInit {
   removeFromCart(cart: Cart): void {
     this.cartService.deleteItemCart(cart.id_cart).subscribe({
       next:() => {
-        console.log('gg')
+        window.location.reload();
       },
       error: () => {
-        console.error('Erreur lors du chargement du panier');
+        console.error('Erreur lors de la supression');
       },
     });
   }

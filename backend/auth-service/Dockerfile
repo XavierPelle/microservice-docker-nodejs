@@ -8,4 +8,4 @@ RUN pip install -r requirements.txt
 
 EXPOSE 5004
 
-ENTRYPOINT ["tail", "-f", "/dev/null"]
+ENTRYPOINT ["python", "app.py"]

@@ -1,9 +1,9 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, catchError, map, Observable, of } from 'rxjs';
 import { UserSigninDTO, UserSignupDTO } from '../models/user';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { environment } from '../../environments/environment.development'; 
+import { Token } from '../models/token';
 
 
 @Injectable({
@@ -12,9 +12,14 @@ import { environment } from '../../environments/environment.development';
 export class AuthentificationService {
 
   private apiUrl = 'http://localhost:5000';
+  $authState = signal<boolean>(false)
 
-  constructor(private http: HttpClient,private jwtHelper: JwtHelperService) {}
-  
+  private readonly state = {
+    $authState: signal<boolean>(false)
+  } as const;
+
+  constructor(private http: HttpClient, private jwtHelper: JwtHelperService) { }
+
   registerWithoutPassword(email: string, firstName: string, lastName: string): Observable<UserSignupDTO> {
     return this.http.post<UserSignupDTO>(`${this.apiUrl}/register`, { email, firstName, lastName });
   }
@@ -24,19 +29,19 @@ export class AuthentificationService {
   }
 
   login(email: String): Observable<UserSigninDTO> {
-    return this.http.post<UserSigninDTO>(`${this.apiUrl}/login_send`, {email});
+    return this.http.post<UserSigninDTO>(`${this.apiUrl}/login_send`, { email });
   }
 
   loginWithPassword(email: string, password: string): Observable<UserSigninDTO> {
     return this.http.post<UserSigninDTO>(`${this.apiUrl}/login`, { email, password: password });
   }
-  
+
 
   async hashPassword(password: string, salt: string): Promise<string> {
     const encoder = new TextEncoder();
     const passwordData = encoder.encode(password);
     const saltData = encoder.encode(salt);
-  
+
     const keyMaterial = await crypto.subtle.importKey(
       'raw',
       passwordData,
@@ -44,7 +49,7 @@ export class AuthentificationService {
       false,
       ['deriveBits']
     );
-  
+
     const derivedBits = await crypto.subtle.deriveBits(
       {
         name: 'PBKDF2',
@@ -55,39 +60,56 @@ export class AuthentificationService {
       keyMaterial,
       256
     );
-  
+
     const hashArray = Array.from(new Uint8Array(derivedBits));
     const hashedPassword = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
     return hashedPassword;
   }
-  
-  isAuthenticated(): boolean {
-      const token = this.getToken();
-      if (!token) return false;
 
-      try {
-          if (this.jwtHelper.isTokenExpired(token)) return false;
-          const decodedToken = this.decodeToken(token);
-          if (!decodedToken) return false;
-          return true;
-      } catch (error) {
-          console.error('Erreur lors de la vérification du token', error);
-          return false;
-      }
+  verifyToken(token: string, userId: number): Observable<object> {
+    return this.http.post<{ message: string }>(`${this.apiUrl}/verify-token`, { token, user_id: userId })
+  }
+
+  getAuthState(): boolean {
+    return this.state.$authState();
+  }
+
+  getUserInfo(): Token {
+    const token = this.getToken();
+    const decodedToken = this.decodeToken(token)
+    return decodedToken;
+  }
+
+
+  isAuthenticated(): Observable<boolean> {
+    const token = this.getToken();
+    const decodedToken = this.decodeToken(token);
+    const userId = decodedToken?.user_id;
+
+    if (!token || !userId) {
+      this.state.$authState.set(false);
+      return of(false);
+    }
+
+    return this.verifyToken(token, userId).pipe(
+      map(() => {
+        this.state.$authState.set(true);
+        return true;
+      }),
+      catchError(() => {
+        this.state.$authState.set(false);
+        return of(false);
+      })
+    );
   }
 
   decodeToken(token: string): any {
     try {
-        const decodedToken = this.jwtHelper.decodeToken(token);
-      
-        if (decodedToken.iss !== environment.JWT_ISS || 
-            decodedToken.aud !== environment.JWT_AUD) {
-            throw new Error('Token non valide');
-        }
-        return decodedToken;
+      const decodedToken = this.jwtHelper.decodeToken(token);
+      return decodedToken;
     } catch (error) {
-        console.error('Erreur lors du décodage du token', error);
-        return null;
+      console.error('Erreur lors du décodage du token', error);
+      return null;
     }
   }
 
