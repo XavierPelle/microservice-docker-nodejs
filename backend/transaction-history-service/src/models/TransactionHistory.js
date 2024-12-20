@@ -10,22 +10,49 @@ const sequelize = require('../config/database');
 class TransactionHistory extends Model {
 }
 TransactionHistory.init({
-    transactionType: { 
-        type: DataTypes.STRING(30),
+
+    idCart: {
+        type: DataTypes.BIGINT,
         allowNull: false,
     },
-    productReference: {
-        type: DataTypes.STRING(20),
-        allowNull: false,
-    },
+
     productName: {
         type: DataTypes.STRING(100),
         allowNull: false,
     },
+
+    productReference: {
+        type: DataTypes.STRING(20),
+        allowNull: false,
+    },
+
     price: {
         type: DataTypes.FLOAT,
         allowNull: true,
     },
+
+    quantity: {
+        type: DataTypes.BIGINT,
+        allowNull: true,
+    },
+
+    userId: {
+        type: DataTypes.STRING(30),
+        allowNull: false,
+    },  
+
+    createAt: { 
+        type: DataTypes.BIGINT,
+        allowNull: false,
+    },
+
+    updateAt: {
+        type: DataTypes.BIGINT,
+        allowNull: false,
+    },
+    
+    
+    
 }, {
     sequelize,
     modelName: 'TransactionHistory',
