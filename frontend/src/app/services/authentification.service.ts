@@ -67,6 +67,7 @@ export class AuthentificationService {
   }
 
   verifyToken(token: string, userId: number): Observable<object> {
+    console.log(token)
     return this.http.post<{ message: string }>(`${this.apiUrl}/verify-token`, { token, user_id: userId })
   }
 
@@ -90,7 +91,6 @@ export class AuthentificationService {
       this.state.$authState.set(false);
       return of(false);
     }
-
     return this.verifyToken(token, userId).pipe(
       map(() => {
         this.state.$authState.set(true);
