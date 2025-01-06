@@ -12,7 +12,7 @@ class TransactionHistory extends Model {
 TransactionHistory.init({
 
     idCart: {
-        type: DataTypes.BIGINT,
+        type: DataTypes.INTEGER,
         allowNull: false,
     },
 
@@ -32,22 +32,12 @@ TransactionHistory.init({
     },
 
     quantity: {
-        type: DataTypes.BIGINT,
+        type: DataTypes.INTEGER,
         allowNull: true,
     },
 
     userId: {
-        type: DataTypes.STRING(30),
-        allowNull: false,
-    },
-
-    createAt: {
-        type: DataTypes.BIGINT,
-        allowNull: false,
-    },
-
-    updateAt: {
-        type: DataTypes.BIGINT,
+        type: DataTypes.INTEGER,
         allowNull: false,
     },
 
