@@ -39,9 +39,9 @@ TransactionHistory.init({
     userId: {
         type: DataTypes.STRING(30),
         allowNull: false,
-    },  
+    },
 
-    createAt: { 
+    createAt: {
         type: DataTypes.BIGINT,
         allowNull: false,
     },
@@ -50,9 +50,14 @@ TransactionHistory.init({
         type: DataTypes.BIGINT,
         allowNull: false,
     },
-    
-    
-    
+
+    commandeReference: {
+        type: DataTypes.STRING(30),
+        allowNull: false,
+    },
+
+
+
 }, {
     sequelize,
     modelName: 'TransactionHistory',
