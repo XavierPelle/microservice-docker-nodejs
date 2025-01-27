@@ -1,7 +1,5 @@
 import { Component } from '@angular/core';
 import { Product } from '../models/product';
-import { ProductService } from '../services/product.service';
-import { CartService } from '../services/cart.service';
 import { CommonModule } from '@angular/common';
 import { AuthentificationService } from '../services/authentification.service';
 import { RequestBuilderService } from '../services/request-builder.service';
@@ -18,8 +16,6 @@ export class ProductComponent {
   productList: Product[] = [];
   userInfo: string = '';
   constructor(
-    private productService: ProductService,
-    private cartService: CartService,
     private authService: AuthentificationService,
     private requestBuilderService: RequestBuilderService
   ) {}
@@ -33,16 +29,6 @@ export class ProductComponent {
         console.error('Erreur lors du chargement des produits');
       },
     });
-    /*
-    this.productService.getProduct().subscribe({
-      next: data => {
-        this.productList = data.map(product => ({...product, quantity: 1}));
-      },
-      error: () => {
-        console.error('Erreur lors du chargement des produits');
-      },
-    });
-    */
   }
 
   increaseQuantity(cart: Product): void {

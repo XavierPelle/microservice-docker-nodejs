@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CartService } from '../services/cart.service';
 import { Cart } from '../models/cart';
 import { AuthentificationService } from '../services/authentification.service';
+import { RequestBuilderService } from '../services/request-builder.service';
 
 @Component({
   selector: 'app-cart',
@@ -15,13 +15,12 @@ export class CartComponent implements OnInit {
 
   cart: Cart[] = [];
 
-  constructor(private cartService: CartService, private authService: AuthentificationService) {}
+  constructor(private authService: AuthentificationService, private requestBuilderService: RequestBuilderService) {}
 
   ngOnInit(): void {
     const userInfo = this.authService.getUserInfo();
-    this.cartService.getCart(userInfo.user_id).subscribe({
+    this.requestBuilderService.execute('get', `/cart/find/${userInfo.user_id}`).subscribe({
       next: data => {
-        console.log(data)
         this.cart = data;
       },
       error: () => {
@@ -30,7 +29,7 @@ export class CartComponent implements OnInit {
     });
   }
   removeFromCart(cart: Cart): void {
-    this.cartService.deleteItemCart(cart.id_cart).subscribe({
+    this.requestBuilderService.execute('delete', `/cart/delete/${cart.id_cart}`).subscribe({
       next:() => {
         window.location.reload();
       },
