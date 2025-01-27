@@ -3,12 +3,13 @@ import { Injectable } from '@angular/core';
 import { Observable, switchMap, tap } from 'rxjs';
 import { AuthentificationService } from './authentification.service';
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RequestBuilderService {
-  private baseUrl: string = 'http://localhost:5000';
+  private baseUrl: string = environment.API_URL;
 
   constructor(
     private http: HttpClient,
