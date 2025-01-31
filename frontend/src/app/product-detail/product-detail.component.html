@@ -1,0 +1,12 @@
+<div *ngIf="product" class="product-container">
+    <div class="image-container">
+        <img [src]="imagesrc" alt="{{ product.name }}" />
+    </div>
+    <div class="product-details">
+        <h2>{{ product.name }}</h2>
+        <p>{{ product.description }}</p>
+        <p class="price">Prix: {{ product.price | currency:'EUR' }}</p>
+        <p class="reference">Référence: {{ product.productReference }}</p>
+        <button class="button-add-to-cart" (click)="addToCart(product)">Ajouter au panier</button>
+    </div>
+</div>
