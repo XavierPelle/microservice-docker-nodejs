@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, catchError, map, Observable, of } from 'rxjs';
+import { catchError, map, Observable, of } from 'rxjs';
 import { UserSigninDTO, UserSignupDTO } from '../models/user';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { Token } from '../models/token';
@@ -67,7 +67,6 @@ export class AuthentificationService {
   }
 
   verifyToken(token: string, userId: number): Observable<object> {
-    console.log(token)
     return this.http.post<{ message: string }>(`${this.apiUrl}/verify-token`, { token, user_id: userId })
   }
 

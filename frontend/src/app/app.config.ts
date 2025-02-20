@@ -5,6 +5,7 @@ import { provideClientHydration } from '@angular/platform-browser';
 import { provideHttpClient, withFetch, withInterceptorsFromDi } from '@angular/common/http';
 import { JwtModule } from '@auth0/angular-jwt';
 import { AuthentificationService } from './services/authentification.service';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -21,6 +22,6 @@ export const appConfig: ApplicationConfig = {
           },
         }
       })
-    )
+    ), provideAnimationsAsync('noop')
   ]
 };
