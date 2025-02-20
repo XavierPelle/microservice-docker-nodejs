@@ -1,14 +1,24 @@
 <nav class="navbar">
-    <div class="navbar__container">
-      <div class="navbar__logo">
-        <a routerLink="/">Projet Anuel</a>
-      </div>
-      <div class="navbar__auth">
-        <a *ngIf="isLoggedIn()" routerLink="/cart" class="navbar__link navbar__link--login">Panier</a>
-        <a *ngIf="isLoggedIn()" routerLink="/product" class="navbar__link navbar__link--login">Produits</a>
-        <a *ngIf="isLoggedIn()" (click)="logout()" class="navbar__link navbar__link--signout">Déconnexion</a>
-        <a *ngIf="!isLoggedIn()" routerLink="/login" class="navbar__link navbar__link--login">Connexion</a>
-        <a *ngIf="!isLoggedIn()" routerLink="/register" class="navbar__link navbar__link--signup">Inscription</a>
-      </div>
+  <div class="navbar__container">
+    <div class="navbar__logo">
+      <a routerLink="/home">Projet Anuel</a>
     </div>
-  </nav>
+    <div class="navbar__auth" [class.active]="isMenuOpen">
+      <a *ngIf="isLoggedIn()" routerLink="/home" class="navbar__link">Accueil</a>
+      <a *ngIf="isLoggedIn()" routerLink="/cart" class="navbar__link navbar__link--cart">
+        <i class="add_shopping_cart"></i>
+        <span class="navbar__cart-count">{{ cartItemCount }}</span>
+        <div *ngIf="cartItemCount > 0" class="navbar__cart-price">
+          Total: {{ totalCartPrice | currency:'EUR' }}
+        </div>
+      </a>
+      <a *ngIf="isLoggedIn()" routerLink="/product" class="navbar__link">Produits</a>
+      <a *ngIf="isLoggedIn()" (click)="logout()" class="navbar__link navbar__link--signout">Déconnexion</a>
+      <a *ngIf="!isLoggedIn()" routerLink="/login" class="navbar__link">Connexion</a>
+      <a *ngIf="!isLoggedIn()" routerLink="/register" class="navbar__link">Inscription</a>
+    </div>
+    <button class="navbar__toggle" (click)="toggleMenu()" aria-label="Toggle navigation">
+      <span class="navbar__toggle-icon">&#9776;</span>
+    </button>
+  </div>
+</nav>

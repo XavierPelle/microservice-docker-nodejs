@@ -68,6 +68,14 @@
                   "with": "src/environments/environment.development.ts"
                 }
               ]
+            },
+            "hmr": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.hmr.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
@@ -80,6 +88,10 @@
             },
             "development": {
               "buildTarget": "angular:build:development"
+            },
+            "hmr": {
+              "hmr": true,
+              "browserTarget": "angular:build:hmr"
             }
           },
           "defaultConfiguration": "development"
