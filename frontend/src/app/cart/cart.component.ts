@@ -44,6 +44,14 @@ export class CartComponent implements OnInit {
   }
 
   buy(): void {
-    console.log('Achat effectué', this.cart);
+    const userInfo = this.authService.getUserInfo();
+    this.requestBuilderService.execute('post', `/transaction-history/create/${userInfo.user_id}`).subscribe({
+      next: data => {
+        this.cart = data;
+      },
+      error: () => {
+        console.error('Erreur lors de l achat');
+      },
+    });
   }
 }
