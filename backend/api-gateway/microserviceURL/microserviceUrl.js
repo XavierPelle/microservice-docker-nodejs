@@ -5,4 +5,5 @@ module.exports = {
   AUTH_API_URL: 'http://auth-service:5004',
   CART_API_URL: 'http://cart-service:5005',
   TOKEN_API_URL: 'http://token-service:8101',
+  VENDOR_API_URL: 'http://vendor-service:5006',
 }

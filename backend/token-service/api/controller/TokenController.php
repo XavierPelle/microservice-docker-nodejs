@@ -53,28 +53,28 @@ class TokenController
     public function verifyToken()
     {
         $this->cleanExpiredTokens();
-    
+
         $data = json_decode(file_get_contents('php://input'), true);
-    
+
         if (!isset($data['token']) || !isset($data['user_id'])) {
             $this->sendResponse(400, ['error' => 'Token et user_id sont requis']);
             return;
         }
-    
+
         $stmt = $this->pdo->prepare("SELECT * FROM token WHERE user_id = :user_id AND token = :token");
         $stmt->execute([
             'user_id' => $data['user_id'],
             'token' => $data['token']
         ]);
         $token = $stmt->fetch(PDO::FETCH_ASSOC);
-    
+
         if ($token) {
             $this->sendResponse(200, ['message' => 'Token valide', 'token' => $token]);
         } else {
             $this->sendResponse(401, ['error' => 'Token invalide ou non trouvé']);
         }
     }
-    
+
     private function generateJWT($data)
     {
         $header = $this->base64UrlEncode(json_encode([
@@ -87,6 +87,7 @@ class TokenController
             'first_name' => $data['firstName'] ?? '',
             'last_name' => $data['lastName'] ?? '',
             'email' => $data['email'] ?? '',
+            'role' => $data['role'] ?? 'user',
             'exp' => time() + $this->tokenExpiration
         ]));
 

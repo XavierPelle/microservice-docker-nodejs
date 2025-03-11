@@ -1,4 +1,4 @@
-    const { Model, DataTypes } = require('sequelize');
+const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
 class User extends Model {
@@ -24,6 +24,11 @@ User.init({
     salt: {
         type: DataTypes.STRING,
         allowNull: true,
+    },
+    role: {
+        type: DataTypes.ENUM('user', 'vendor', 'admin'),
+        allowNull: false,
+        defaultValue: 'user'
     }
 }, {
     sequelize,
