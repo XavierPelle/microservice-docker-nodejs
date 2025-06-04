@@ -1,12 +1,10 @@
-version: "3.8"
-
 services:
   api-gateway:
     build:
       context: ../backend/api-gateway
     container_name: api-gateway
     volumes:
-      - ../backend/api-gateway:/usr/src/app  
+      - ../backend/api-gateway:/usr/src/app
     ports:
       - "5000:5000"
     networks:
@@ -35,13 +33,13 @@ services:
     env_file:
       - ../backend/user-service/.env
     volumes:
-      - ../backend/user-service:/usr/src/app  
+      - ../backend/user-service:/usr/src/app
     ports:
       - "5001:5001"
     networks:
       - microservice
     depends_on:
-      - db_user-service  
+      - db_user-service
     command: ["sh", "./start.sh", "db_user-service"]
 
   db_product-service:
@@ -66,15 +64,14 @@ services:
     env_file:
       - ../backend/product-service/.env
     volumes:
-      - ../backend/product-service:/usr/src/app  
+      - ../backend/product-service:/usr/src/app
     ports:
       - "5002:5002"
     networks:
       - microservice
     depends_on:
-      - db_product-service  
+      - db_product-service
     command: ["sh", "./start.sh", "db_product-service"]
-
 
   db_transaction-history-service:
     container_name: db_transaction-history-service
@@ -98,13 +95,13 @@ services:
     env_file:
       - ../backend/transaction-history-service/.env
     volumes:
-      - ../backend/transaction-history-service:/usr/src/app  
+      - ../backend/transaction-history-service:/usr/src/app
     ports:
       - "5003:5003"
     networks:
       - microservice
     depends_on:
-      - db_transaction-history-service 
+      - db_transaction-history-service
     command: ["sh", "./start.sh", "db_transaction-history-service"]
 
   db_cart-service:
@@ -129,13 +126,13 @@ services:
     env_file:
       - ../backend/cart-service/.env
     volumes:
-      - ../backend/cart-service:/usr/src/app  
+      - ../backend/cart-service:/usr/src/app
     ports:
       - "5005:5005"
     networks:
       - microservice
     depends_on:
-      - db_cart-service 
+      - db_cart-service
     command: ["sh", "./start.sh", "db_cart-service"]
 
   auth-service:
@@ -143,14 +140,14 @@ services:
       context: ../backend/auth-service
     container_name: auth-service
     volumes:
-      - ../backend/auth-service:/usr/src/app  
+      - ../backend/auth-service:/usr/src/app
     ports:
       - "5004:5004"
     networks:
       - microservice
 
   token-service:
-    build: 
+    build:
       context: ../backend/token-service
     container_name: token-service
     ports:
@@ -179,10 +176,72 @@ services:
     ports:
       - 4200:4200
     volumes:
-      - ../frontend:/usr/src/app  
+      - ../frontend:/usr/src/app
     networks:
       - microservice
     restart: always
+
+  db_admin-service:
+    container_name: db_admin-service
+    image: postgres:13
+    restart: always
+    env_file:
+      - ../backend/admin-service/.env
+    environment:
+      POSTGRES_USER: main
+      POSTGRES_PASSWORD: FB1atQfXCPptY7I7BuMsAX91bGcTXx4R
+      POSTGRES_DB: db_admin-service
+    ports:
+      - "3805:5436"
+    networks:
+      - microservice
+
+  admin-service:
+    build:
+      context: ../backend/admin-service
+    container_name: admin-service
+    env_file:
+      - ../backend/admin-service/.env
+    volumes:
+      - ../backend/admin-service:/usr/src/app
+    ports:
+      - "5007:5007"
+    networks:
+      - microservice
+    depends_on:
+      - db_admin-service
+    command: ["sh", "./start.sh", "db_admin-service"]
+
+  db_vendor-service:
+    container_name: db_vendor-service
+    image: postgres:13
+    restart: always
+    env_file:
+      - ../backend/vendor-service/.env
+    environment:
+      POSTGRES_USER: main
+      POSTGRES_PASSWORD: FB1atQfXCPptY7I7BuMsAX91bGcTXx4R
+      POSTGRES_DB: db_vendor-service
+    ports:
+      - "3806:5437"
+    networks:
+      - microservice
+
+  vendor-service:
+    build:
+      context: ../backend/vendor-service
+    container_name: vendor-service
+    env_file:
+      - ../backend/vendor-service/.env
+    volumes:
+      - ../backend/vendor-service:/usr/src/app
+    ports:
+      - "5006:5006"
+    networks:
+      - microservice
+    depends_on:
+      - db_vendor-service
+    command: ["sh", "./start.sh", "db_vendor-service"]
 
 networks:
   microservice:
