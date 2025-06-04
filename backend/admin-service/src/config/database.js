@@ -1,21 +1,31 @@
 const { Sequelize } = require('sequelize');
+require('dotenv').config();
 
-const dbHost = process.env.DB_HOST;
-const dbUser = process.env.DB_USER;
-const dbPassword = process.env.DB_PASSWORD;
-const dbName = process.env.DB_NAME;
+const sequelize = new Sequelize(
+    process.env.DB_NAME || 'admin_db',
+    process.env.DB_USER || 'postgres',
+    process.env.DB_PASSWORD || 'postgres',
+    {
+        host: process.env.DB_HOST || 'admin-db',
+        dialect: 'postgres',
+        logging: false,
+        pool: {
+            max: 5,
+            min: 0,
+            acquire: 30000,
+            idle: 10000
+        }
+    }
+);
 
-const sequelize = new Sequelize(dbName, dbUser, dbPassword, {
-  host: dbHost,
-  dialect: 'postgres',
-});
-
-sequelize.sync({ force: false })
-    .then(() => {
-        console.log('La base de données et la table sont synchronisées et recréées à chaque démarrage.');
-    })
-    .catch((error) => {
-        console.error('Erreur lors de la synchronisation de la base de données:', error);
-    });
+// Test the database connection
+(async () => {
+    try {
+        await sequelize.authenticate();
+        console.log('Database connection established successfully.');
+    } catch (error) {
+        console.error('Unable to connect to the database:', error);
+    }
+})();
 
 module.exports = sequelize;
