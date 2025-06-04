@@ -1,0 +1,190 @@
+version: "3.8"
+
+services:
+  api-gateway:
+    build:
+      context: ../backend/api-gateway
+    container_name: api-gateway
+    volumes:
+      - ../backend/api-gateway:/usr/src/app  
+    ports:
+      - "5000:5000"
+    networks:
+      - microservice
+    command: ["sh", "./start.sh"]
+
+  db_user-service:
+    container_name: db_user-service
+    image: postgres:13
+    restart: always
+    env_file:
+      - ../backend/user-service/.env
+    environment:
+      POSTGRES_USER: main
+      POSTGRES_PASSWORD: FB1atQfXCPptY7I7BuMsAX91bGcTXx4R
+      POSTGRES_DB: db_user-service
+    ports:
+      - "3801:5432"
+    networks:
+      - microservice
+
+  user-service:
+    build:
+      context: ../backend/user-service
+    container_name: user-service
+    env_file:
+      - ../backend/user-service/.env
+    volumes:
+      - ../backend/user-service:/usr/src/app  
+    ports:
+      - "5001:5001"
+    networks:
+      - microservice
+    depends_on:
+      - db_user-service  
+    command: ["sh", "./start.sh", "db_user-service"]
+
+  db_product-service:
+    container_name: db_product-service
+    image: postgres:13
+    restart: always
+    env_file:
+      - ../backend/product-service/.env
+    environment:
+      POSTGRES_USER: main
+      POSTGRES_PASSWORD: FB1atQfXCPptY7I7BuMsAX91bGcTXx4R
+      POSTGRES_DB: db_product-service
+    ports:
+      - "3802:5433"
+    networks:
+      - microservice
+
+  product-service:
+    build:
+      context: ../backend/product-service
+    container_name: product-service
+    env_file:
+      - ../backend/product-service/.env
+    volumes:
+      - ../backend/product-service:/usr/src/app  
+    ports:
+      - "5002:5002"
+    networks:
+      - microservice
+    depends_on:
+      - db_product-service  
+    command: ["sh", "./start.sh", "db_product-service"]
+
+
+  db_transaction-history-service:
+    container_name: db_transaction-history-service
+    image: postgres:13
+    restart: always
+    env_file:
+      - ../backend/transaction-history-service/.env
+    environment:
+      POSTGRES_USER: main
+      POSTGRES_PASSWORD: FB1atQfXCPptY7I7BuMsAX91bGcTXx4R
+      POSTGRES_DB: db_transaction-history-service
+    ports:
+      - "3803:5434"
+    networks:
+      - microservice
+
+  transaction-history-service:
+    build:
+      context: ../backend/transaction-history-service
+    container_name: transaction-history-service
+    env_file:
+      - ../backend/transaction-history-service/.env
+    volumes:
+      - ../backend/transaction-history-service:/usr/src/app  
+    ports:
+      - "5003:5003"
+    networks:
+      - microservice
+    depends_on:
+      - db_transaction-history-service 
+    command: ["sh", "./start.sh", "db_transaction-history-service"]
+
+  db_cart-service:
+    container_name: db_cart-service
+    image: postgres:13
+    restart: always
+    env_file:
+      - ../backend/cart-service/.env
+    environment:
+      POSTGRES_USER: main
+      POSTGRES_PASSWORD: FB1atQfXCPptY7I7BuMsAX91bGcTXx4R
+      POSTGRES_DB: db_cart-service
+    ports:
+      - "3804:5435"
+    networks:
+      - microservice
+
+  cart-service:
+    build:
+      context: ../backend/cart-service
+    container_name: cart-service
+    env_file:
+      - ../backend/cart-service/.env
+    volumes:
+      - ../backend/cart-service:/usr/src/app  
+    ports:
+      - "5005:5005"
+    networks:
+      - microservice
+    depends_on:
+      - db_cart-service 
+    command: ["sh", "./start.sh", "db_cart-service"]
+
+  auth-service:
+    build:
+      context: ../backend/auth-service
+    container_name: auth-service
+    volumes:
+      - ../backend/auth-service:/usr/src/app  
+    ports:
+      - "5004:5004"
+    networks:
+      - microservice
+
+  token-service:
+    build: 
+      context: ../backend/token-service
+    container_name: token-service
+    ports:
+      - "8101:8101"
+    volumes:
+      - ../backend/token-service/api:/var/www/html
+    depends_on:
+      - db_token-service
+    networks:
+      - microservice
+
+  db_token-service:
+    image: mysql:8.0-oracle
+    container_name: token-service-db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: testdb
+    networks:
+      - microservice
+
+  angular:
+    container_name: angular
+    build:
+      context: ../frontend/
+      dockerfile: Dockerfile
+    ports:
+      - 4200:4200
+    volumes:
+      - ../frontend:/usr/src/app  
+    networks:
+      - microservice
+    restart: always
+
+networks:
+  microservice:
+    driver: bridge
+    external: true
