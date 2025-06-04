@@ -1,5 +1,9 @@
 const { createProxyMiddleware } = require('http-proxy-middleware');
+<<<<<<< HEAD
 const { USER_API_URL, PRODUCT_API_URL, TRANSACTION_HISTOY_API_URL, AUTH_API_URL, CART_API_URL, TOKEN_API_URL, ADMIN_API_URL, VENDOR_API_URL } = require('../microserviceURL/microserviceUrl');
+=======
+const { USER_API_URL, PRODUCT_API_URL, TRANSACTION_HISTOY_API_URL, AUTH_API_URL, CART_API_URL, TOKEN_API_URL } = require('../microserviceURL/microserviceUrl');
+>>>>>>> 846a4ce70f29f3d00cbc77415fa1672aca86b9d1
 
 const optionsUser = {
   target: USER_API_URL,
@@ -61,6 +65,7 @@ const optionsToken = {
   },
 };
 
+<<<<<<< HEAD
 const optionsAdmin = {
   target: ADMIN_API_URL,
   changeOrigin: true,
@@ -80,6 +85,8 @@ const optionsVendor = {
     res.status(500).send('Something went wrong with the vendor service.');
   },
 };
+=======
+>>>>>>> 846a4ce70f29f3d00cbc77415fa1672aca86b9d1
 
 const userProxy = createProxyMiddleware(optionsUser);
 const productProxy = createProxyMiddleware(optionsProduct);
@@ -87,8 +94,11 @@ const transactionHistoryProxy = createProxyMiddleware(optionsTransactionHistory)
 const authProxy = createProxyMiddleware(optionsAuth);
 const cartProxy = createProxyMiddleware(optionsCart);
 const tokenProxy = createProxyMiddleware(optionsToken);
+<<<<<<< HEAD
 const adminProxy = createProxyMiddleware(optionsAdmin);
 const vendorProxy = createProxyMiddleware(optionsVendor);
+=======
+>>>>>>> 846a4ce70f29f3d00cbc77415fa1672aca86b9d1
 
 module.exports = {
   userProxy,
@@ -96,7 +106,11 @@ module.exports = {
   transactionHistoryProxy,
   authProxy,
   cartProxy,
+<<<<<<< HEAD
   tokenProxy,
   adminProxy,
   vendorProxy
+=======
+  tokenProxy
+>>>>>>> 846a4ce70f29f3d00cbc77415fa1672aca86b9d1
 };
