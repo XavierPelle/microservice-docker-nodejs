@@ -1,0 +1,29 @@
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+      <span class="menu-toggle" (click)="toggleMenu()">&#9776;</span>
+      <ul [class.active]="isMenuActive">
+          <li><a href="/home">Cadeaux</a></li>
+          <li><a href="/home">Nouveauté</a></li>
+          <li><a href="/home">Beauté</a></li>
+          <li><a href="/home">Homme</a></li>
+          <li><a href="/home">Femme</a></li>
+          <li><a href="/home">Junior</a></li>
+          <li><a href="/home">Accueil</a></li>
+          <li><a href="/product">Produits</a></li>
+          <li><a href="#" class="highlight">Dernière Sortie</a></li>
+      </ul>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+      <div class="overlay">
+          <h1>Good Intentions</h1>
+          <div class="buttons">
+              <button>Homme</button>
+              <button>Femme</button>
+          </div>
+      </div>
+  </section>
+    
+</body>

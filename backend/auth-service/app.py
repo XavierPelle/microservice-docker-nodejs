@@ -16,6 +16,12 @@ TARGET_URL_USER = 'http://user-service:5001/users/create'
 TARGET_URL_GET = 'http://user-service:5001/users/'
 
 
+# Health
+@app.route('/health', methods=['GET'])
+def health():
+    return jsonify({"status": "OK"}), 200
+
+
 @app.before_request
 def before_request():
     token = request.headers.get('Authorization')
