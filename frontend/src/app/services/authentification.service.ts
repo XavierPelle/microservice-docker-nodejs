@@ -1,10 +1,9 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { catchError, map, Observable, of } from 'rxjs';
+import { BehaviorSubject, catchError, map, Observable, of } from 'rxjs';
 import { UserSigninDTO, UserSignupDTO } from '../models/user';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { Token } from '../models/token';
-
 
 @Injectable({
   providedIn: 'root'
@@ -12,13 +11,21 @@ import { Token } from '../models/token';
 export class AuthentificationService {
 
   private apiUrl = 'http://localhost:5000';
-  $authState = signal<boolean>(false)
+  private readonly _authState = new BehaviorSubject<boolean>(false);  
 
   private readonly state = {
     $authState: signal<boolean>(false)
   } as const;
 
   constructor(private http: HttpClient, private jwtHelper: JwtHelperService) { }
+
+  get authState$(): Observable<boolean> {
+    return this._authState.asObservable();
+  }
+
+  private setAuthState(authState: boolean): void {
+    this._authState.next(authState);
+  }
 
   registerWithoutPassword(email: string, firstName: string, lastName: string): Observable<UserSignupDTO> {
     return this.http.post<UserSignupDTO>(`${this.apiUrl}/register`, { email, firstName, lastName });
@@ -35,7 +42,6 @@ export class AuthentificationService {
   loginWithPassword(email: string, password: string): Observable<UserSigninDTO> {
     return this.http.post<UserSigninDTO>(`${this.apiUrl}/login`, { email, password: password });
   }
-
 
   async hashPassword(password: string, salt: string): Promise<string> {
     const encoder = new TextEncoder();
@@ -70,16 +76,11 @@ export class AuthentificationService {
     return this.http.post<{ message: string }>(`${this.apiUrl}/verify-token`, { token, user_id: userId })
   }
 
-  getAuthState(): boolean {
-    return this.state.$authState();
-  }
-
   getUserInfo(): Token {
     const token = this.getToken();
     const decodedToken = this.decodeToken(token)
     return decodedToken;
   }
-
 
   isAuthenticated(): Observable<boolean> {
     const token = this.getToken();
@@ -87,16 +88,16 @@ export class AuthentificationService {
     const userId = decodedToken?.user_id;
 
     if (!token || !userId) {
-      this.state.$authState.set(false);
+      this.setAuthState(false);
       return of(false);
     }
     return this.verifyToken(token, userId).pipe(
       map(() => {
-        this.state.$authState.set(true);
+        this.setAuthState(true);
         return true;
       }),
       catchError(() => {
-        this.state.$authState.set(false);
+        this.setAuthState(false);
         return of(false);
       })
     );
@@ -118,5 +119,6 @@ export class AuthentificationService {
 
   logout(): void {
     localStorage.removeItem('access_token');
+    this.setAuthState(false);
   }
-}  
+}

@@ -1,14 +1,104 @@
-<nav class="navbar">
-    <div class="navbar__container">
-      <div class="navbar__logo">
-        <a routerLink="/">Projet Anuel</a>
+<header>
+  <div class="container-fluid">
+    <div class="row py-3 border-bottom align-items-center">
+
+      <div
+        class="col-sm-4 col-lg-2 text-center text-sm-start d-flex gap-3 justify-content-center justify-content-md-start">
+        <div class="d-flex align-items-center">
+          <a href="index.html"><img [ngSrc]="'./logo.png'" alt="Logo" width="128" height="64"></a>
+        </div>
+        <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
+          aria-controls="offcanvasNavbar">
+          <span class="navbar-toggler-icon"></span>
+        </button>
       </div>
-      <div class="navbar__auth">
-        <a *ngIf="isLoggedIn()" routerLink="/cart" class="navbar__link navbar__link--login">Panier</a>
-        <a *ngIf="isLoggedIn()" routerLink="/product" class="navbar__link navbar__link--login">Produits</a>
-        <a *ngIf="isLoggedIn()" (click)="logout()" class="navbar__link navbar__link--signout">Déconnexion</a>
-        <a *ngIf="!isLoggedIn()" routerLink="/login" class="navbar__link navbar__link--login">Connexion</a>
-        <a *ngIf="!isLoggedIn()" routerLink="/register" class="navbar__link navbar__link--signup">Inscription</a>
+
+      <div class="col-sm-6 col-lg-4">
+        <div class="search-bar row bg-light p-2 rounded-4 align-items-center">
+          <div class="col-md-4 d-none d-md-block">
+            <select class="form-select border-0 bg-transparent">
+              <option>Catégorie</option>
+              <option>Vétements</option>
+              <option>Informatique</option>
+              <option>Electro-ménager</option>
+            </select>
+          </div>
+          <div class="col-11 col-md-7">
+            <form id="search-form" class="text-center" action="index.html" method="post">
+              <input type="text" class="form-control border-0 bg-transparent"
+                placeholder="Rechercher parmis plus de 20,000 produits">
+            </form>
+          </div>
+          <div class="col-1">
+            <i class="bi bi-search"></i>
+          </div>
+        </div>
       </div>
+
+      <div class="col-sm-2 col-lg-6 d-flex align-items-center justify-content-end">
+        <ul class="d-flex justify-content-end align-items-center list-unstyled m-0">
+          <li *ngIf="authStateSubscription">
+            <a routerLink="/favorites" class="p-2 mx-1 d-flex align-items-center justify-content-center"
+              style="width: 40px; height: 40px;">
+              <i class="bi bi-heart"></i>
+            </a>
+          </li>
+          <li *ngIf="authStateSubscription">
+            <a href="#" class="p-2 mx-1 d-flex align-items-center justify-content-center position-relative"
+              style="width: 40px; height: 40px;" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart"
+              aria-controls="offcanvasCart">
+              <i class="bi bi-bag"></i>
+              <span *ngIf="cart.length > 0"
+                class="badge bg-primary rounded-pill position-absolute  start-100 translate-middle">
+                {{ cart.length }}
+              </span>
+            </a>
+          </li>
+
+          <li *ngIf="authStateSubscription">
+            <a routerLink="/login" class="p-2 mx-1 d-flex align-items-center justify-content-center"
+              style="width: 40px; height: 40px;">
+              <i class="bi bi-person"></i>
+            </a>
+          </li>
+          <li *ngIf="authStateSubscription">
+            <a href="#" (click)="logout()" class="p-2 mx-1 d-flex align-items-center justify-content-center"
+              style="width: 40px; height: 40px;">
+              <i class="bi bi-box-arrow-right"></i>
+            </a>
+          </li>
+        </ul>
+      </div>
+
     </div>
-  </nav>
+  </div>
+</header>
+<div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="offcanvasCart">
+  <div class="offcanvas-header justify-content-center">
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <div class="order-md-last">
+      <h4 class="d-flex justify-content-between align-items-center mb-3">
+        <span class="text-primary">Panier</span>
+        <span class="badge bg-primary rounded-pill">{{ cart.length }}</span>
+      </h4>
+      <ul class="list-group mb-3">
+        <li *ngFor="let item of cart" class="list-group-item d-flex justify-content-between lh-sm">
+          <div>
+            <h6 class="my-0">{{ item.name }}</h6>
+            <small class="text-body-secondary">{{ item.productReference }}</small>
+          </div>
+          <span class="text-body-secondary">{{ item.price }} €</span>
+        </li>
+
+        <li class="list-group-item d-flex justify-content-between">
+          <span>Total</span>
+          <strong>{{ getTotalPrice() }} €</strong>
+        </li>
+      </ul>
+
+      <button class="w-100 btn btn-primary btn-lg" (click)="goToCart()" type="submit">Aller au panier</button>
+    </div>
+  </div>
+</div>

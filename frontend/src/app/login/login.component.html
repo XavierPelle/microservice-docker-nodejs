@@ -1,18 +1,20 @@
 <section>
-    <div class="container">
-        <h2>Se connecter</h2>
+    <div class="container py-5">
+        <h2 class="text-center mb-4">Se connecter</h2>
         <form class="signup-form" (ngSubmit)="login()">
-            <div class="form-group">
-                <label for="email">Adresse e-mail</label>
-                <input type="email" id="email" name="email" [(ngModel)]="user.email" required>
+            <div class="mb-3">
+                <label for="email" class="form-label">Adresse e-mail</label>
+                <input type="email" id="email" name="email" class="form-control" [(ngModel)]="user.email" required>
             </div>
-            <div class="form-group">
-                <label for="password">Mot de passe</label>
-                <input type="password" id="password" name="password" [(ngModel)]="user.password" required>
+
+            <div class="mb-3">
+                <label for="password" class="form-label">Mot de passe</label>
+                <input type="password" id="password" name="password" class="form-control" [(ngModel)]="user.password" required>
             </div>
-            <div class="form-group">
-                <button type="submit">Se connecter</button>
-                <a href="/register" class="login">Pas de compte ? créer en un!</a>
+
+            <div class="d-flex justify-content-between align-items-center">
+                <button type="submit" class="btn btn-primary">Se connecter</button>
+                <a href="/register" class="text-muted">Pas de compte ? </a>
             </div>
         </form>
     </div>

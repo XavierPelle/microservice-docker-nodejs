@@ -7,4 +7,5 @@ export interface Product {
     description: string;
 	productReference: string;
 	quantity: number;
+	image: string
 }

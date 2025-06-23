@@ -17,20 +17,24 @@ export class RequestBuilderService {
     private router: Router
   ) {}
 
-  execute(httpRequest: string, url: string, payload?: any): Observable<any> {
+  execute(httpRequest: string, url: string, payload?: any, skipConnectionCheck: boolean = false): Observable<any> {
     const finalUrl = this.buildUrl(url);
-    const token = this.authService.getToken();
-    const userInfo = this.authService.getUserInfo();
-
-    return this.authService.verifyToken(token, userInfo.user_id).pipe(
-      tap({
-        error: () => {
-          console.error('Token verification failed');
-          this.router.navigate(['/login']);
-        },
-      }),
-      switchMap(() => this.makeHttpRequest(httpRequest, finalUrl, payload))
-    );
+    
+    if (!skipConnectionCheck) {
+      const token = this.authService.getToken();
+      const userInfo = this.authService.getUserInfo();
+      return this.authService.verifyToken(token, userInfo.user_id).pipe(
+        tap({
+          error: () => {
+            console.error('Token verification failed');
+            this.router.navigate(['/login']);
+          },
+        }),
+        switchMap(() => this.makeHttpRequest(httpRequest, finalUrl, payload))
+      );
+    } else {
+      return this.makeHttpRequest(httpRequest, finalUrl, payload);
+    }
   }
 
   private buildUrl(url: string): string {

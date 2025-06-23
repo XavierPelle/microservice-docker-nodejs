@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { UserSigninDTO } from '../models/user';
 import { AuthentificationService } from '../services/authentification.service';
 import { FormsModule } from '@angular/forms';
@@ -11,9 +11,9 @@ import { Router } from '@angular/router';
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
-export class LoginComponent {
-  
-  constructor(private authentificationService: AuthentificationService, private router: Router) {}
+export class LoginComponent implements OnInit {
+
+  constructor(private authentificationService: AuthentificationService, private router: Router) { }
 
   user: UserSigninDTO = {
     email: '',
@@ -21,6 +21,15 @@ export class LoginComponent {
     salt: '',
     access_token: ''
   };
+
+
+  ngOnInit(): void {
+    const userInfo = this.authentificationService.getUserInfo();
+    console.log(userInfo)
+    if (userInfo) {
+      this.router.navigate(['/']);
+    }
+  }
 
   login() {
     this.authentificationService.login(this.user.email).subscribe({
@@ -30,7 +39,7 @@ export class LoginComponent {
             this.authentificationService.loginWithPassword(this.user.email, hashedPassword).subscribe({
               next: (loginResponse) => {
                 localStorage.setItem('access_token', loginResponse.access_token);
-                this.router.navigate(['/cart']);
+                this.router.navigate(['/']);
               },
               error: (loginError) => {
                 console.error('Erreur lors de la connexion avec le mot de passe haché', loginError);

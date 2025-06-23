@@ -14,3 +14,4 @@ $router->addRoute('GET', '/get-token', [$tokenController, 'getTokens']);
 $router->addRoute('POST', '/verify-token', [$tokenController, 'verifyToken']);
 
 $router->handleRequest();
+    
