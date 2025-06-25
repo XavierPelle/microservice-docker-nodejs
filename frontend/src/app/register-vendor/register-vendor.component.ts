@@ -5,7 +5,7 @@ import { UserSignupDTO } from '../models/user';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-register',
+  selector: 'app-register-vendor',
   standalone: true,
   imports: [FormsModule],
   templateUrl: './register-vendor.component.html',
