@@ -1,0 +1,83 @@
+<div class="max-w-xl mx-auto mt-10 p-6 bg-white rounded-xl shadow-md border border-gray-100">
+  <h2 class="text-2xl font-bold mb-4 text-center text-purple-700">Mon Profil Vendeur</h2>
+  <div *ngIf="loading" class="text-center text-gray-500">Chargement...</div>
+  <div *ngIf="error && !loading" class="text-center text-red-500">{{ error }}</div>
+  <div *ngIf="vendor && !loading">
+    <div class="mb-4">
+      <span class="font-semibold text-gray-700">Nom du magasin :</span>
+      <span class="ml-2">{{ vendor.storeName }}</span>
+    </div>
+    <div class="mb-4">
+      <span class="font-semibold text-gray-700">Description :</span>
+      <span class="ml-2">{{ vendor.storeDescription }}</span>
+    </div>
+    <div class="mb-4">
+      <span class="font-semibold text-gray-700">Statut :</span>
+      <span class="ml-2 capitalize">{{ vendor.status }}</span>
+    </div>
+    <div class="mb-4">
+      <span class="font-semibold text-gray-700">ID vendeur :</span>
+      <span class="ml-2">{{ vendor.id }}</span>
+    </div>
+    <div class="mb-4">
+      <span class="font-semibold text-gray-700">Utilisateur lié :</span>
+      <span class="ml-2">{{ user.first_name }} {{ user.last_name }} ({{ user.email }})</span>
+    </div>
+    <div class="text-center mt-8">
+      <button (click)="toggleProductForm()" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors duration-200">
+        {{ showProductForm ? 'Annuler' : 'Ajouter un produit' }}
+      </button>
+    </div>
+    <!-- Formulaire d'ajout de produit -->
+    <div *ngIf="showProductForm" class="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+      <form (ngSubmit)="submitProduct()" #productFormRef="ngForm">
+        <div class="mb-4">
+          <label class="block text-gray-700 font-semibold mb-1">Nom du produit</label>
+          <input type="text" class="w-full border rounded px-3 py-2" [(ngModel)]="productForm.name" name="name" required />
+        </div>
+        <div class="mb-4">
+          <label class="block text-gray-700 font-semibold mb-1">Description</label>
+          <textarea class="w-full border rounded px-3 py-2" [(ngModel)]="productForm.description" name="description" required></textarea>
+        </div>
+        <div class="mb-4">
+          <label class="block text-gray-700 font-semibold mb-1">Prix (€)</label>
+          <input type="number" class="w-full border rounded px-3 py-2" [(ngModel)]="productForm.price" name="price" required min="0" step="0.01" />
+        </div>
+        <div class="mb-4">
+          <label class="block text-gray-700 font-semibold mb-1">Quantité</label>
+          <input type="number" class="w-full border rounded px-3 py-2" [(ngModel)]="productForm.quantity" name="quantity" required min="1" />
+        </div>
+        <div class="text-center">
+          <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors duration-200">Ajouter</button>
+        </div>
+        <div *ngIf="productMessage" class="mt-2 text-center text-green-600">{{ productMessage }}</div>
+      </form>
+    </div>
+    <!-- Liste des produits -->
+    <div class="mt-10">
+      <h3 class="text-xl font-bold mb-4 text-gray-800">Mes produits</h3>
+      <div *ngIf="loadingProducts" class="text-center text-gray-500">Chargement des produits...</div>
+      <div *ngIf="!loadingProducts && products.length === 0" class="text-center text-gray-500">Aucun produit trouvé.</div>
+      <div *ngIf="!loadingProducts && products.length > 0">
+        <table class="w-full border rounded">
+          <thead>
+            <tr class="bg-gray-100">
+              <th class="py-2 px-4">Nom</th>
+              <th class="py-2 px-4">Description</th>
+              <th class="py-2 px-4">Prix</th>
+              <th class="py-2 px-4">Quantité</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let product of products">
+              <td class="py-2 px-4">{{ product.name }}</td>
+              <td class="py-2 px-4">{{ product.description }}</td>
+              <td class="py-2 px-4">{{ product.price | number:'1.2-2' }} €</td>
+              <td class="py-2 px-4">{{ product.quantity }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div> 
