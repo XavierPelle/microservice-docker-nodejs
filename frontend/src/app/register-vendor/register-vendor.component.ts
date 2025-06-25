@@ -8,10 +8,10 @@ import { Router } from '@angular/router';
   selector: 'app-register',
   standalone: true,
   imports: [FormsModule],
-  templateUrl: './register.component.html',
-  styleUrls: ['./register.component.scss']
+  templateUrl: './register-vendor.component.html',
+  styleUrls: ['./register-vendor.component.scss']
 })
-export class RegisterComponent {
+export class RegisterVendorComponent {
 
   user: UserSignupDTO = {
     firstName: '',
@@ -19,7 +19,7 @@ export class RegisterComponent {
     email: '',
     password: '',
     salt: '',
-    role: 'user'
+    role: ''
   };
 
   constructor(
@@ -28,11 +28,12 @@ export class RegisterComponent {
   ) {}
 
   register(): void {
+    (this.user as any).role = 'vendor';
     this.authentificationService.registerWithoutPassword(
       this.user.email,
       this.user.firstName,
       this.user.lastName,
-      'user'
+      (this.user as any).role
     ).subscribe({
       next: (response: UserSignupDTO) => {
         if (response && response.salt) {

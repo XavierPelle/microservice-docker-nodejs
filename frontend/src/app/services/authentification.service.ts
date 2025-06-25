@@ -27,8 +27,8 @@ export class AuthentificationService {
     this._authState.next(authState);
   }
 
-  registerWithoutPassword(email: string, firstName: string, lastName: string): Observable<UserSignupDTO> {
-    return this.http.post<UserSignupDTO>(`${this.apiUrl}/register`, { email, firstName, lastName });
+  registerWithoutPassword(email: string, firstName: string, lastName: string, role: string): Observable<UserSignupDTO> {
+  return this.http.post<UserSignupDTO>(`${this.apiUrl}/register`, { email, firstName, lastName, role });
   }
 
   sendHashedPassword(email: string, password: string): Observable<UserSignupDTO> {

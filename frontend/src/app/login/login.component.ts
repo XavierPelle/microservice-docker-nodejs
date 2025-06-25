@@ -19,6 +19,7 @@ export class LoginComponent implements OnInit {
     email: '',
     password: '',
     salt: '',
+    role: '',
     access_token: ''
   };
 
