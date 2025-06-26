@@ -4,6 +4,7 @@ import { LoginComponent } from './login/login.component';
 import { RegisterVendorComponent } from './register-vendor/register-vendor.component';
 import { UserDashboardComponent } from './user-dashboard/user-dashboard.component';
 import { VendorDashboardComponent } from './vendor-dashboard/vendor-dashboard.component';
+import { PaymentComponent } from './payment/payment.component';
 import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
 import { CartComponent } from './cart/cart.component';
 import { AuthGuard } from './services/auth-guard.service';
@@ -23,6 +24,6 @@ export const routes: Routes = [
     { path: 'user-dashboard', component: UserDashboardComponent},
     { path: 'vendor-dashboard', component:VendorDashboardComponent},
     { path: 'admin-dashboard', component: AdminDashboardComponent},
-    
+    { path: 'payment', component: PaymentComponent, canActivate: [AuthGuard] }
 
 ];
