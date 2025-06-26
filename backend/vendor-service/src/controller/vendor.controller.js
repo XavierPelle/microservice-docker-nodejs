@@ -161,6 +161,25 @@ class VendorController {
             res.status(500).json({ message: 'Failed to fetch dashboard stats' });
         }
     }
+
+    async getVendorByUserId(req, res) {
+        try {
+            const userId = req.params.userId;
+            const vendor = await Vendor.findOne({ where: { userId } });
+            if (!vendor) {
+                return res.status(404).json({ message: "Vendor not found" });
+            }
+            // Récupérer les infos utilisateur associées
+            try {
+                const userResponse = await axios.get(`${this.userServiceUrl}/users/${userId}`);
+                res.json({ ...vendor.toJSON(), user: userResponse.data });
+            } catch (error) {
+                res.json(vendor);
+            }
+        } catch (error) {
+            res.status(500).json({ message: 'Failed to fetch vendor by userId.' });
+        }
+    }
 }
 
 module.exports = VendorController;

@@ -42,6 +42,7 @@ def register():
     firstName = data.get('firstName')
     lastName = data.get('lastName')
     email = data.get('email')
+    role = data.get('role', 'user')  # Récupérer le rôle, défaut 'user'
 
     # Vérifie si l'utilisateur existe déjà dans la "base de données"
     if email in users:
@@ -61,7 +62,8 @@ def register():
         'firstName': firstName,
         'lastName': lastName,
         'email': email,
-        'salt': salt
+        'salt': salt,
+        'role': role  # Ajouter le rôle
     }
 
     users[email] = user_info
@@ -85,6 +87,7 @@ def register_up():
     user_info = {
         'email': email,
         'password': password,
+        # Ne pas inclure le rôle ici pour ne pas écraser celui existant
     }
     print(email)
     users[email] = user_info
@@ -138,6 +141,7 @@ def login():
     user_first_name = user_data.get('firstName')
     user_last_name = user_data.get('lastName')
     user_id = user_data.get('id')
+    user_role = user_data.get('role', 'user')  # Récupérer le rôle
 
     if password != password_from_db:
         return jsonify({"error": "Nom d'utilisateur ou mot de passe incorrect"}), 401
@@ -147,6 +151,7 @@ def login():
         "email": email,
         "firstName": user_first_name,
         "lastName": user_last_name,
+        "role": user_role  # Ajouter le rôle au token
     }
     token_api_url = 'http://token-service:8101/add-token'
     token_response = requests.post(token_api_url, json=token_data)

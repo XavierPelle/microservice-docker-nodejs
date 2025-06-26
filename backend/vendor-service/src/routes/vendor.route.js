@@ -21,4 +21,6 @@ router.delete('/:vendorId/products/:productId', vendorController.deleteProduct);
 // Dashboard
 router.get('/:vendorId/dashboard', vendorController.getDashboardStats);
 
+router.get('/user/:userId', vendorController.getVendorByUserId);
+
 module.exports = router;

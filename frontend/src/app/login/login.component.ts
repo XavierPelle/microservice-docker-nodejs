@@ -40,7 +40,21 @@ export class LoginComponent implements OnInit {
             this.authentificationService.loginWithPassword(this.user.email, hashedPassword).subscribe({
               next: (loginResponse) => {
                 localStorage.setItem('access_token', loginResponse.access_token);
-                this.router.navigate(['/']);
+                
+                // Récupérer les informations utilisateur pour déterminer la redirection
+                const userInfo = this.authentificationService.getUserInfo();
+                if (userInfo) {
+                  // Rediriger selon le rôle
+                  if (userInfo.role === 'admin') {
+                    this.router.navigate(['/admin-dashboard']);
+                  } else if (userInfo.role === 'vendor') {
+                    this.router.navigate(['/vendor-dashboard']);
+                  } else {
+                    this.router.navigate(['/user-dashboard']);
+                  }
+                } else {
+                  this.router.navigate(['/']);
+                }
               },
               error: (loginError) => {
                 console.error('Erreur lors de la connexion avec le mot de passe haché', loginError);

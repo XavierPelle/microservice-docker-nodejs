@@ -5,5 +5,8 @@ RUN apk add --no-cache postgresql-client
 WORKDIR /usr/src/app
 
 COPY package*.json ./
+RUN npm install
 
-EXPOSE 5001
+COPY . .
+
+EXPOSE 5002
