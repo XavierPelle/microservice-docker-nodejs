@@ -57,6 +57,27 @@ services:
     networks:
       - microservice
 
+  
+
+
+
+
+  db_vendor-product-service:
+    container_name: db_vendor-product-service
+    image: postgres:13
+    restart: always
+    env_file:
+      - ../backend/vendor-product-service/.env
+    environment:
+      POSTGRES_USER: main
+      POSTGRES_PASSWORD: FB1atQfXCPptY7I7BuMsAX91bGcTXx4R
+      POSTGRES_DB: db_vendor-product-service
+    ports:
+      - "3808:5439"
+    networks:
+      - microservice
+
+
   product-service:
     build:
       context: ../backend/product-service
@@ -72,6 +93,29 @@ services:
     depends_on:
       - db_product-service
     command: ["sh", "./start.sh", "db_product-service"]
+
+
+
+
+  vendor-product-service:
+    build:
+      context: ../backend/vendor-product-service
+    container_name: vendor-product-service
+    env_file:
+      - ../backend/vendor-product-service/.env
+    volumes:
+      - ../backend/vendor-product-service:/usr/src/app
+    ports:
+      - "5009:5009"
+    networks:
+      - microservice
+    depends_on:
+      - db_vendor-product-service
+    command: ["sh", "./start.sh", "db_vendor-product-service"]
+
+
+
+  
 
   db_transaction-history-service:
     container_name: db_transaction-history-service
@@ -226,6 +270,20 @@ services:
       - "3806:5437"
     networks:
       - microservice
+  db_payment-service:
+    container_name: db_payment-service
+    image: postgres:13
+    restart: always
+    env_file:
+      - ../backend/payment-service/.env
+    environment:
+      POSTGRES_USER: main
+      POSTGRES_PASSWORD: FB1atQfXCPptY7I7BuMsAX91bGcTXx4R
+      POSTGRES_DB: db_payment-service
+    ports:
+      - "3807:5438"
+    networks:
+      - microservice
 
   vendor-service:
     build:
@@ -242,6 +300,23 @@ services:
     depends_on:
       - db_vendor-service
     command: ["sh", "./start.sh", "db_vendor-service"]
+
+
+  payment-service:
+    build:
+      context: ../backend/payment-service
+    container_name: payment-service
+    env_file:
+      - ../backend/payment-service/.env
+    volumes:
+      - ../backend/payment-service:/usr/src/app
+    ports:
+      - "5008:5008"
+    networks:
+      - microservice
+    depends_on:
+      - db_payment-service
+    command: ["sh", "./start.sh", "db_payment-service"]
 
 networks:
   microservice:
