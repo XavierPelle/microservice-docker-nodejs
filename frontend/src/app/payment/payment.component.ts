@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { PaymentService } from '../services/payment.service';
 import { HttpClientModule } from '@angular/common/http';
@@ -8,7 +9,7 @@ import { HttpClient } from '@angular/common/http';
 @Component({
   selector: 'app-payment',
   standalone: true,
-  imports: [FormsModule, HttpClientModule],
+  imports: [CommonModule,FormsModule, HttpClientModule],
   templateUrl: './payment.component.html',
   styleUrls: ['./payment.component.scss']
 })
