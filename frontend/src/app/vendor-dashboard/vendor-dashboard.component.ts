@@ -41,9 +41,18 @@ export class VendorDashboardComponent implements OnInit {
       this.loading = false;
       return;
     }
-    this.requestBuilder.execute('get', '/vendors', null, true).subscribe({
-      next: (vendors: any[]) => {
-        this.vendor = vendors.find(v => v.userId === this.user.user_id);
+
+    // Vérifier que l'utilisateur est bien un vendor
+    if (this.user.role !== 'vendor') {
+      this.error = 'Accès non autorisé. Seuls les vendeurs peuvent accéder à ce dashboard.';
+      this.loading = false;
+      return;
+    }
+
+    // Utiliser la route dédiée pour récupérer le profil vendeur par userId
+    this.requestBuilder.execute('get', `/vendors/user/${this.user.user_id}`, null, true).subscribe({
+      next: (vendor: any) => {
+        this.vendor = vendor;
         this.loading = false;
         if (!this.vendor) {
           this.error = 'Aucun profil vendeur trouvé pour cet utilisateur.';
@@ -51,8 +60,9 @@ export class VendorDashboardComponent implements OnInit {
           this.loadProducts();
         }
       },
-      error: () => {
-        this.error = 'Erreur lors de la récupération des vendeurs.';
+      error: (error) => {
+        console.error('Erreur lors de la récupération du vendeur:', error);
+        this.error = 'Erreur lors de la récupération des données vendeur.';
         this.loading = false;
       }
     });

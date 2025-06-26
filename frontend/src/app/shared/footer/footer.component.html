@@ -1,3 +1,223 @@
-<footer class="bg-gray-900 text-gray-200 py-8 mt-12 text-center">
-  &copy; 2025 Amazur. Tous droits réservés.
+<style>
+  .footer-container {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    color: white;
+    padding: 40px 0 20px 0;
+    margin-top: 50px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  .footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+  }
+
+  .footer-section {
+    margin-bottom: 20px;
+  }
+
+  .footer-section h3 {
+    color: #ffd700;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 2px solid #ffd700;
+    padding-bottom: 5px;
+  }
+
+  .footer-section p {
+    line-height: 1.6;
+    margin-bottom: 10px;
+    font-size: 14px;
+  }
+
+  .footer-section ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .footer-section ul li {
+    margin-bottom: 8px;
+  }
+
+  .footer-section ul li a {
+    color: #e0e0e0;
+    text-decoration: none;
+    transition: color 0.3s ease;
+    font-size: 14px;
+  }
+
+  .footer-section ul li a:hover {
+    color: #ffd700;
+  }
+
+  .contact-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 14px;
+  }
+
+  .contact-info i {
+    margin-right: 10px;
+    color: #ffd700;
+    width: 16px;
+  }
+
+  .social-links {
+    display: flex;
+    gap: 15px;
+    margin-top: 15px;
+  }
+
+  .social-links a {
+    display: inline-block;
+    width: 35px;
+    height: 35px;
+    background: #ffd700;
+    color: #1e3c72;
+    text-align: center;
+    line-height: 35px;
+    border-radius: 50%;
+    text-decoration: none;
+    font-weight: bold;
+    transition: transform 0.3s ease;
+  }
+
+  .social-links a:hover {
+    transform: scale(1.1);
+  }
+
+  .footer-bottom {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 15px 0;
+    margin-top: 30px;
+    text-align: center;
+  }
+
+  .footer-bottom p {
+    margin: 0;
+    font-size: 12px;
+    color: #b0b0b0;
+  }
+
+  .footer-bottom .highlight {
+    color: #ffd700;
+    font-weight: bold;
+  }
+
+  .vendor-section {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .vendor-btn {
+    display: inline-block;
+    background: linear-gradient(45deg, #ffd700, #ffed4e);
+    color: #1e3c72;
+    text-decoration: none;
+    padding: 12px 24px;
+    border-radius: 25px;
+    font-weight: bold;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+  }
+
+  .vendor-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+    color: #1e3c72;
+    text-decoration: none;
+  }
+
+  @media (max-width: 768px) {
+    .footer-content {
+      grid-template-columns: 1fr;
+      text-align: center;
+    }
+    
+    .social-links {
+      justify-content: center;
+    }
+  }
+</style>
+
+<footer class="footer-container">
+  <div class="footer-content">
+    <div class="footer-section">
+      <h3>Amazur</h3>
+      <p>Votre plateforme de confiance pour tous vos besoins en ligne. Nous proposons une large gamme de produits de qualité avec un service client exceptionnel.</p>
+      <div class="social-links">
+        <a href="#" title="Facebook">F</a>
+        <a href="#" title="Twitter">T</a>
+        <a href="#" title="Instagram">I</a>
+        <a href="#" title="LinkedIn">L</a>
+      </div>
+    </div>
+
+    <div class="footer-section">
+      <h3>Liens Rapides</h3>
+      <ul>
+        <li><a href="#">Accueil</a></li>
+        <li><a href="#">Produits</a></li>
+        <li><a href="#">À propos</a></li>
+        <li><a href="#">Contact</a></li>
+        <li><a href="#">Blog</a></li>
+        <li><a href="#">FAQ</a></li>
+      </ul>
+      <div class="vendor-section">
+        <a href="#" class="vendor-btn">Devenir Vendor</a>
+      </div>
+    </div>
+
+    <div class="footer-section">
+      <h3>Services</h3>
+      <ul>
+        <li><a href="#">Livraison Express</a></li>
+        <li><a href="#">Retours Gratuits</a></li>
+        <li><a href="#">Support 24/7</a></li>
+        <li><a href="#">Garantie Produit</a></li>
+        <li><a href="#">Programme Fidélité</a></li>
+        <li><a href="#">Paiement Sécurisé</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-section">
+      <h3>Contact</h3>
+      <div class="contact-info">
+        <span>📍</span>
+        <span>123 Rue du Commerce, 75001 Paris, France</span>
+      </div>
+      <div class="contact-info">
+        <span>📞</span>
+        <span>+33 1 23 45 67 89</span>
+      </div>
+      <div class="contact-info">
+        <span>✉️</span>
+        <span>contact&#64;amazur.fr</span>
+      </div>
+      <div class="contact-info">
+        <span>🕒</span>
+        <span>Lun-Ven: 9h-18h, Sam: 10h-16h</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>&copy; <span class="highlight">2025 Amazur</span>. Tous droits réservés. | 
+       <a href="#" style="color: #ffd700; text-decoration: none;">Politique de confidentialité</a> | 
+       <a href="#" style="color: #ffd700; text-decoration: none;">Conditions d'utilisation</a> | 
+       <a href="#" style="color: #ffd700; text-decoration: none;">Mentions légales</a>
+    </p>
+  </div>
 </footer> 

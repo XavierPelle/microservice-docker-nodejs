@@ -23,6 +23,13 @@ export class RequestBuilderService {
     if (!skipConnectionCheck) {
       const token = this.authService.getToken();
       const userInfo = this.authService.getUserInfo();
+      
+      if (!userInfo || !userInfo.user_id) {
+        console.error('User info is null or missing user_id');
+        this.router.navigate(['/login']);
+        return new Observable(subscriber => subscriber.error('User info is null'));
+      }
+      
       return this.authService.verifyToken(token, userInfo.user_id).pipe(
         tap({
           error: () => {

@@ -1,18 +1,17 @@
 #!/bin/sh
-set -e
 
 host="$1"
 shift
 cmd="$@"
 
-echo "Checking for $host..."
-until nc -z -v -w30 $host 5432
-do
-  echo "Waiting for database connection..."
-  sleep 5
+until pg_isready -h "$host"; do
+  >&2 echo "Postgres is unavailable - sleeping"
+  sleep 1
 done
-echo "Database is up!"
+
+>&2 echo "Postgres is up - executing command"
 
 npm install
-npm start
+
+node src/app.js
 

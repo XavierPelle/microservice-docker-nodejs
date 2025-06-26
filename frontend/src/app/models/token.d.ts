@@ -3,5 +3,6 @@ export interface Token {
     firstName: string;
     lastName: string;
     email: string;
+    role: string;
 }
   

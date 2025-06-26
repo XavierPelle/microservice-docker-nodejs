@@ -1,5 +1,4 @@
 #!/bin/sh
-set -e
 
 host="$1"
 shift
@@ -14,5 +13,7 @@ done
 
 npm install
 
-npx ts-node src/app.ts 
+npx tsc
+
+node dist/app.js 
 
