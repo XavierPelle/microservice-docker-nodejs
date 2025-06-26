@@ -4,10 +4,14 @@ const sequelize = require('../config/database');
 class Vendor extends Model {}
 
 Vendor.init({
-    userId: {
+    vendorUserId: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        unique: true
+        unique: true,
+        references: {
+            model: 'vendor_users',
+            key: 'id'
+        }
     },
     storeName: {
         type: DataTypes.STRING(100),
