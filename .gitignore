@@ -128,3 +128,18 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Cart service specific files to ignore
+backend/cart-service/src/controller/cart.controller.js
+backend/cart-service/src/models/Cart.js
+backend/cart-service/src/routes/card.route.js
+backend/cart-service/start.sh
+
+# Auth service cache
+backend/auth-service/__pycache__/
