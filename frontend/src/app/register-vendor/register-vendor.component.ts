@@ -90,7 +90,7 @@ export class RegisterVendorComponent {
               storeName: this.vendorProfile.storeName || `${this.user.firstName} ${this.user.lastName} Store`,
               storeDescription: this.vendorProfile.storeDescription || 'Boutique en ligne'
             };
-            this.http.post('http://localhost:5006/vendors', vendorData).subscribe({
+            this.requestBuilder.execute('POST','/vendors', vendorData).subscribe({
               next: () => {
                 this.message = "Inscription réussie, veuillez vous connecter.";
                 this.resetForm();
