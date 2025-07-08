@@ -1,3 +1,5 @@
+version: "3.9"
+
 services:
   api-gateway:
     build:
@@ -16,10 +18,11 @@ services:
     image: postgres:13
     restart: always
     env_file:
+      - .env
       - ../backend/user-service/.env
     environment:
-      POSTGRES_USER: main
-      POSTGRES_PASSWORD: FB1atQfXCPptY7I7BuMsAX91bGcTXx4R
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: db_user-service
     ports:
       - "3801:5432"
@@ -32,6 +35,7 @@ services:
     container_name: user-service
     env_file:
       - ../backend/user-service/.env
+      - .env
     volumes:
       - ../backend/user-service:/usr/src/app
     ports:
@@ -47,42 +51,23 @@ services:
     image: postgres:13
     restart: always
     env_file:
+      - .env
       - ../backend/product-service/.env
     environment:
-      POSTGRES_USER: main
-      POSTGRES_PASSWORD: FB1atQfXCPptY7I7BuMsAX91bGcTXx4R
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: db_product-service
     ports:
       - "3802:5433"
     networks:
       - microservice
 
-  
-
-
-
-
-  db_vendor-product-service:
-    container_name: db_vendor-product-service
-    image: postgres:13
-    restart: always
-    env_file:
-      - ../backend/vendor-product-service/.env
-    environment:
-      POSTGRES_USER: main
-      POSTGRES_PASSWORD: FB1atQfXCPptY7I7BuMsAX91bGcTXx4R
-      POSTGRES_DB: db_vendor-product-service
-    ports:
-      - "3808:5439"
-    networks:
-      - microservice
-
-
   product-service:
     build:
       context: ../backend/product-service
     container_name: product-service
     env_file:
+      - .env
       - ../backend/product-service/.env
     volumes:
       - ../backend/product-service:/usr/src/app
@@ -94,14 +79,28 @@ services:
       - db_product-service
     command: ["sh", "./start.sh", "db_product-service"]
 
-
-
+  db_vendor-product-service:
+    container_name: db_vendor-product-service
+    image: postgres:13
+    restart: always
+    env_file:
+      - .env
+      - ../backend/vendor-product-service/.env
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: db_vendor-product-service
+    ports:
+      - "3808:5439"
+    networks:
+      - microservice
 
   vendor-product-service:
     build:
       context: ../backend/vendor-product-service
     container_name: vendor-product-service
     env_file:
+      - .env
       - ../backend/vendor-product-service/.env
     volumes:
       - ../backend/vendor-product-service:/usr/src/app
@@ -113,19 +112,16 @@ services:
       - db_vendor-product-service
     command: ["sh", "./start.sh", "db_vendor-product-service"]
 
-
-
-  
-
   db_transaction-history-service:
     container_name: db_transaction-history-service
     image: postgres:13
     restart: always
     env_file:
+      - .env
       - ../backend/transaction-history-service/.env
     environment:
-      POSTGRES_USER: main
-      POSTGRES_PASSWORD: FB1atQfXCPptY7I7BuMsAX91bGcTXx4R
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: db_transaction-history-service
     ports:
       - "3803:5434"
@@ -137,6 +133,7 @@ services:
       context: ../backend/transaction-history-service
     container_name: transaction-history-service
     env_file:
+      - .env
       - ../backend/transaction-history-service/.env
     volumes:
       - ../backend/transaction-history-service:/usr/src/app
@@ -153,10 +150,11 @@ services:
     image: postgres:13
     restart: always
     env_file:
+      - .env
       - ../backend/cart-service/.env
     environment:
-      POSTGRES_USER: main
-      POSTGRES_PASSWORD: FB1atQfXCPptY7I7BuMsAX91bGcTXx4R
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: db_cart-service
     ports:
       - "3804:5435"
@@ -168,6 +166,7 @@ services:
       context: ../backend/cart-service
     container_name: cart-service
     env_file:
+      - .env
       - ../backend/cart-service/.env
     volumes:
       - ../backend/cart-service:/usr/src/app
@@ -218,7 +217,7 @@ services:
       context: ../frontend/
       dockerfile: Dockerfile
     ports:
-      - 4200:4200
+      - "4200:4200"
     volumes:
       - ../frontend:/usr/src/app
     networks:
@@ -230,10 +229,11 @@ services:
     image: postgres:13
     restart: always
     env_file:
+      - .env
       - ../backend/admin-service/.env
     environment:
-      POSTGRES_USER: main
-      POSTGRES_PASSWORD: FB1atQfXCPptY7I7BuMsAX91bGcTXx4R
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: db_admin-service
     ports:
       - "3805:5436"
@@ -245,6 +245,7 @@ services:
       context: ../backend/admin-service
     container_name: admin-service
     env_file:
+      - .env
       - ../backend/admin-service/.env
     volumes:
       - ../backend/admin-service:/usr/src/app
@@ -261,24 +262,27 @@ services:
     image: postgres:13
     restart: always
     env_file:
+      - .env
       - ../backend/vendor-service/.env
     environment:
-      POSTGRES_USER: main
-      POSTGRES_PASSWORD: FB1atQfXCPptY7I7BuMsAX91bGcTXx4R
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: db_vendor-service
     ports:
       - "3806:5437"
     networks:
       - microservice
+
   db_payment-service:
     container_name: db_payment-service
     image: postgres:13
     restart: always
     env_file:
+      - .env
       - ../backend/payment-service/.env
     environment:
-      POSTGRES_USER: main
-      POSTGRES_PASSWORD: FB1atQfXCPptY7I7BuMsAX91bGcTXx4R
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: db_payment-service
     ports:
       - "3807:5438"
@@ -290,6 +294,7 @@ services:
       context: ../backend/vendor-service
     container_name: vendor-service
     env_file:
+      - .env
       - ../backend/vendor-service/.env
     volumes:
       - ../backend/vendor-service:/usr/src/app
@@ -301,12 +306,12 @@ services:
       - db_vendor-service
     command: ["sh", "./start.sh", "db_vendor-service"]
 
-
   payment-service:
     build:
       context: ../backend/payment-service
     container_name: payment-service
     env_file:
+      - .env
       - ../backend/payment-service/.env
     volumes:
       - ../backend/payment-service:/usr/src/app
