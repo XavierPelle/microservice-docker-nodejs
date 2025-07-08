@@ -5,6 +5,9 @@ function vendorRoutes(app) {
   // For admin to access all vendors
   app.get('/vendors', checkRole(['admin']), vendorProxy);
   
+  // Pour récupérer un vendeur par userId
+  app.get('/vendors/user/:userId', vendorProxy);
+
   // For vendor-specific operations
   const vendorCheck = checkRole(['vendor', 'admin']);
   app.get('/vendors/:id', vendorProxy);
@@ -20,6 +23,9 @@ function vendorRoutes(app) {
   
   // Dashboard
   app.get('/vendors/:vendorId/dashboard', vendorCheck, vendorProxy);
+
+  // Route publique pour tous les produits de tous les vendeurs
+  app.get('/vendors/products', vendorProxy);
 }
 
 module.exports = { vendorRoutes };

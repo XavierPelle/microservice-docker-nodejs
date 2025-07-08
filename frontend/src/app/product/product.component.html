@@ -1,6 +1,12 @@
 <section>
   <div class="container-lg">
-    <div class="row row-cols-1 row-cols-md-3 g-4 justify-content-center">
+    <div *ngIf="errorMsg" class="alert alert-danger my-4 text-center">
+      {{ errorMsg }}
+    </div>
+    <div *ngIf="!errorMsg && productList.length === 0" class="alert alert-info my-4 text-center">
+      Aucun produit trouvé pour le moment.
+    </div>
+    <div class="row row-cols-1 row-cols-md-3 g-4 justify-content-center" *ngIf="productList.length > 0">
       <div *ngFor="let product of productList" class="col">
         <div class="card border-0 rounded-3 shadow-lg h-100">
           <div class="card-body p-4" (click)="onCardClick(product)">

@@ -1,86 +1,819 @@
-<div class="max-w-5xl mx-auto mt-10 p-6 bg-white rounded-xl shadow-md border border-gray-100">
-  <h2 class="text-3xl font-bold mb-8 text-center text-blue-700">Dashboard Admin</h2>
+<style>
+  .dashboard-container {
+    display: flex;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  }
 
-  <!-- Stats globales -->
-  <div class="mb-10">
-    <h3 class="text-xl font-bold mb-4 text-gray-800">Statistiques globales</h3>
-    <div *ngIf="loadingStats" class="text-gray-500">Chargement des statistiques...</div>
-    <div *ngIf="statsError" class="text-red-500">{{ statsError }}</div>
-    <div *ngIf="stats && !loadingStats">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="bg-blue-100 rounded-lg p-6 text-center">
-          <div class="text-2xl font-bold text-blue-700">{{ stats.totalUsers }}</div>
-          <div class="text-gray-700">Utilisateurs</div>
-        </div>
-        <div class="bg-green-100 rounded-lg p-6 text-center">
-          <div class="text-2xl font-bold text-green-700">{{ stats.totalVendors }}</div>
-          <div class="text-gray-700">Vendeurs</div>
-        </div>
-        <div class="bg-purple-100 rounded-lg p-6 text-center">
-          <div class="text-2xl font-bold text-purple-700">{{ stats.totalProducts }}</div>
-          <div class="text-gray-700">Produits</div>
+  .sidebar {
+    width: 280px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1);
+    padding: 20px 0;
+    position: relative;
+  }
+
+  .sidebar-header {
+    padding: 0 20px 20px;
+    border-bottom: 1px solid #e0e0e0;
+    margin-bottom: 20px;
+    position: relative;
+  }
+
+  .logout-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .logout-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(239, 68, 68, 0.3);
+  }
+
+  .sidebar-header h2 {
+    color: #333;
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0;
+  }
+
+  .sidebar-header p {
+    color: #666;
+    margin: 5px 0 0 0;
+    font-size: 14px;
+  }
+
+  .nav-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .nav-item {
+    margin: 0;
+  }
+
+  .nav-link {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    color: #555;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border-left: 3px solid transparent;
+    cursor: pointer;
+  }
+
+  .nav-link:hover {
+    background: rgba(79, 70, 229, 0.1);
+    color: #4f46e5;
+    border-left-color: #4f46e5;
+  }
+
+  .nav-link.active {
+    background: rgba(79, 70, 229, 0.15);
+    color: #4f46e5;
+    border-left-color: #4f46e5;
+    font-weight: 600;
+  }
+
+  .nav-icon {
+    margin-right: 12px;
+    font-size: 18px;
+    width: 20px;
+    text-align: center;
+  }
+
+  .main-content {
+    flex: 1;
+    padding: 30px;
+  }
+
+  .welcome {
+    font-size: 22px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 25px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+
+  .content-header {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .content-header h1 {
+    color: #333;
+    font-size: 28px;
+    font-weight: bold;
+    margin: 0 0 10px 0;
+  }
+
+  .content-header p {
+    color: #666;
+    margin: 0;
+  }
+
+  .content-card {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+  }
+
+  .form-input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+  }
+
+  .form-input:focus {
+    outline: none;
+    border-color: #4f46e5;
+  }
+
+  .btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    color: white;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(79, 70, 229, 0.4);
+  }
+
+  .btn-danger {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+  }
+
+  .btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4);
+  }
+
+  .btn-success {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+  }
+
+  .btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+  }
+
+  .btn-warning {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white;
+  }
+
+  .btn-warning:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(245, 158, 11, 0.4);
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin-bottom: 25px;
+  }
+
+  .stat-card {
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    color: white;
+    padding: 25px;
+    border-radius: 15px;
+    text-align: center;
+  }
+
+  .stat-number {
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+
+  .stat-label {
+    font-size: 14px;
+    opacity: 0.9;
+  }
+
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+
+  .data-table th {
+    background: #f8f9fa;
+    padding: 15px;
+    text-align: left;
+    font-weight: 600;
+    color: #333;
+    border-bottom: 2px solid #e0e0e0;
+  }
+
+  .data-table td {
+    padding: 15px;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  .data-table tr:hover {
+    background: #f8f9fa;
+  }
+
+  .status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .status-pending {
+    background: #fef3c7;
+    color: #d97706;
+  }
+
+  .status-approved {
+    background: #d1fae5;
+    color: #059669;
+  }
+
+  .status-rejected {
+    background: #fee2e2;
+    color: #dc2626;
+  }
+
+  .role-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .role-admin {
+    background: #ede9fe;
+    color: #7c3aed;
+  }
+
+  .role-vendor {
+    background: #dbeafe;
+    color: #2563eb;
+  }
+
+  .role-user {
+    background: #dcfce7;
+    color: #16a34a;
+  }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+  }
+
+  .info-card {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 20px;
+    border: 1px solid #e0e0e0;
+  }
+
+  .info-card h4 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 18px;
+  }
+
+  .info-card p {
+    margin: 5px 0;
+    color: #666;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #666;
+  }
+
+  .empty-icon {
+    font-size: 48px;
+    margin-bottom: 15px;
+    opacity: 0.5;
+  }
+
+  .loading {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+  }
+
+  .error {
+    background: #fee;
+    color: #c33;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+
+  .success {
+    background: #efe;
+    color: #3c3;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  @media (max-width: 768px) {
+    .sidebar {
+      width: 100%;
+      position: relative;
+      height: auto;
+    }
+    .main-content {
+      margin-left: 0;
+    }
+    .dashboard-container {
+      flex-direction: column;
+    }
+    .stats-grid {
+      grid-template-columns: 1fr;
+    }
+    .card-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<div class="dashboard-container">
+  <!-- Sidebar Navigation -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <h2>Dashboard Admin</h2>
+      <p>Administration du système</p>
+      <button class="logout-btn" (click)="logout()">
+        🚪 Déconnexion
+      </button>
+    </div>
+    <ul class="nav-menu">
+      <li class="nav-item">
+        <a class="nav-link" [class.active]="activeTab === 'dashboard'" (click)="setActiveTab('dashboard')">
+          <span class="nav-icon">📊</span>
+          Dashboard
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [class.active]="activeTab === 'admins'" (click)="setActiveTab('admins')">
+          <span class="nav-icon">👑</span>
+          Administrateurs
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [class.active]="activeTab === 'vendors'" (click)="setActiveTab('vendors')">
+          <span class="nav-icon">🏪</span>
+          Vendeurs
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [class.active]="activeTab === 'users'" (click)="setActiveTab('users')">
+          <span class="nav-icon">👥</span>
+          Utilisateurs
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [class.active]="activeTab === 'products'" (click)="setActiveTab('products')">
+          <span class="nav-icon">📦</span>
+          Produits
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="welcome">
+      Dashboard Administrateur
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loadingStats || loadingAdmins || loadingVendors || loadingUsers || loadingProducts" class="loading">
+      Chargement du dashboard...
+    </div>
+
+    <!-- Error Messages -->
+    <div *ngIf="statsError" class="error">
+      {{ statsError }}
+    </div>
+    <div *ngIf="adminsError" class="error">
+      {{ adminsError }}
+    </div>
+    <div *ngIf="vendorsError" class="error">
+      {{ vendorsError }}
+    </div>
+    <div *ngIf="usersError" class="error">
+      {{ usersError }}
+    </div>
+    <div *ngIf="productsError" class="error">
+      {{ productsError }}
+    </div>
+
+    <!-- Success Messages -->
+    <div *ngIf="adminMessage && adminMessage.includes('succès')" class="success">
+      {{ adminMessage }}
+    </div>
+    <div *ngIf="vendorActionMessage && vendorActionMessage.includes('succès')" class="success">
+      {{ vendorActionMessage }}
+    </div>
+    <div *ngIf="userActionMessage && userActionMessage.includes('succès')" class="success">
+      {{ userActionMessage }}
+    </div>
+    <div *ngIf="productActionMessage && productActionMessage.includes('succès')" class="success">
+      {{ productActionMessage }}
+    </div>
+
+    <!-- Dashboard Tab -->
+    <div *ngIf="activeTab === 'dashboard' && !loadingStats">
+      <div class="content-header">
+        <h1>Vue d'ensemble</h1>
+        <p>Statistiques globales du système</p>
+      </div>
+      <div class="content-card">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-number">{{ stats?.totalUsers || 0 }}</div>
+            <div class="stat-label">Utilisateurs</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">{{ stats?.totalVendors || 0 }}</div>
+            <div class="stat-label">Vendeurs</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">{{ stats?.totalProducts || 0 }}</div>
+            <div class="stat-label">Produits</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">{{ stats?.pendingVendorApprovals || 0 }}</div>
+            <div class="stat-label">En attente</div>
+          </div>
         </div>
       </div>
     </div>
+
+    <!-- Admins Tab -->
+    <div *ngIf="activeTab === 'admins' && !loadingAdmins">
+      <div class="content-header">
+        <h1>Gestion des Administrateurs</h1>
+        <p>Gérez les administrateurs du système</p>
+      </div>
+
+      <!-- Add Admin Form -->
+      <div class="content-card" *ngIf="showAdminForm">
+        <h3>Créer un nouvel administrateur</h3>
+        <div class="form-group">
+          <label class="form-label">Sélectionner un utilisateur</label>
+          <select class="form-input" [(ngModel)]="adminForm.userId" required>
+            <option value="" disabled selected>Choisir un utilisateur</option>
+            <option *ngFor="let user of users" [value]="user.id">
+              {{ user.firstName }} {{ user.lastName }} ({{ user.email }}) - {{ user.role }}
+            </option>
+          </select>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-primary" (click)="createAdmin()" [disabled]="addingAdmin">
+            {{ addingAdmin ? 'Création...' : 'Créer Admin' }}
+          </button>
+          <button class="btn btn-secondary" (click)="toggleAdminForm()">Annuler</button>
+        </div>
+      </div>
+
+      <!-- Admins List -->
+      <div class="content-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <h3>Administrateurs</h3>
+          <button class="btn btn-primary" (click)="toggleAdminForm()">
+            {{ showAdminForm ? 'Annuler' : '+ Ajouter Admin' }}
+          </button>
+        </div>
+
+        <div *ngIf="!loadingAdmins">
+          <div *ngIf="admins && admins.length > 0; else emptyAdmins">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Utilisateur</th>
+                  <th>Email</th>
+                  <th>Rôle</th>
+                  <th>Dernière connexion</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let admin of admins">
+                  <td>{{ admin.id }}</td>
+                  <td>
+                    <span *ngIf="admin.user">{{ admin.user.firstName }} {{ admin.user.lastName }}</span>
+                    <span *ngIf="!admin.user">Utilisateur #{{ admin.userId }}</span>
+                  </td>
+                  <td>
+                    <span *ngIf="admin.user">{{ admin.user.email }}</span>
+                    <span *ngIf="!admin.user">-</span>
+                  </td>
+                  <td>
+                    <span class="role-badge role-admin">Admin</span>
+                  </td>
+                  <td>
+                    {{ admin.lastLogin ? (admin.lastLogin | date:'dd/MM/yyyy HH:mm') : 'Jamais' }}
+                  </td>
+                  <td>
+                    <button class="btn btn-danger" (click)="deleteAdmin(admin.id)">
+                      Supprimer
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vendors Tab -->
+    <div *ngIf="activeTab === 'vendors' && !loadingVendors">
+      <div class="content-header">
+        <h1>Gestion des Vendeurs</h1>
+        <p>Approuvez ou rejetez les demandes de vendeurs</p>
+      </div>
+
+      <div class="content-card">
+        <div *ngIf="!loadingVendors">
+          <div *ngIf="vendors && vendors.length > 0; else emptyVendors">
+            <div class="card-grid">
+              <div class="info-card" *ngFor="let vendor of vendors">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px;">
+                  <h4>{{ vendor.storeName }}</h4>
+                  <span class="status-badge" [class]="'status-' + vendor.status">
+                    {{ vendor.status }}
+                  </span>
+                </div>
+                <p><strong>ID:</strong> {{ vendor.id }}</p>
+                <p><strong>Vendeur ID:</strong> {{ vendor.vendorUserId }}</p>
+                <p><strong>Description:</strong> {{ vendor.storeDescription || 'Aucune description' }}</p>
+
+                <div *ngIf="vendor.status === 'pending'" style="margin-top: 15px;">
+                  <button class="btn btn-success" (click)="approveVendor(vendor.id)" style="margin-right: 10px;">
+                    Approuver
+                  </button>
+                  <button class="btn btn-danger" (click)="rejectVendor(vendor.id)">
+                    Rejeter
+                  </button>
+                </div>
+
+                <div *ngIf="vendor.status !== 'pending'" style="margin-top: 15px; color: #666;">
+                  {{ vendor.status === 'approved' ? '✅ Approuvé' : '❌ Rejeté' }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Users Tab -->
+    <div *ngIf="activeTab === 'users' && !loadingUsers">
+      <div class="content-header">
+        <h1>Gestion des Utilisateurs</h1>
+        <p>Gérez tous les utilisateurs du système</p>
+      </div>
+
+      <!-- Edit User Form -->
+      <div class="content-card" *ngIf="showUserForm">
+        <h3>{{ selectedUser ? 'Modifier l\'utilisateur' : 'Créer un nouvel utilisateur' }}</h3>
+        <div class="form-group">
+          <label class="form-label">Prénom</label>
+          <input type="text" class="form-input" [(ngModel)]="userForm.firstName" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Nom</label>
+          <input type="text" class="form-input" [(ngModel)]="userForm.lastName" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-input" [(ngModel)]="userForm.email" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Rôle</label>
+          <select class="form-input" [(ngModel)]="userForm.role" required>
+            <option value="user">Utilisateur</option>
+            <option value="vendor">Vendeur</option>
+            <option value="admin">Administrateur</option>
+          </select>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-primary" (click)="updateUser()">
+            {{ selectedUser ? 'Mettre à jour' : 'Créer' }}
+          </button>
+          <button class="btn btn-secondary" (click)="toggleUserForm()">Annuler</button>
+        </div>
+      </div>
+
+      <!-- Users List -->
+      <div class="content-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <h3>Utilisateurs</h3>
+          <button class="btn btn-primary" (click)="toggleUserForm()">
+            {{ showUserForm ? 'Annuler' : '+ Ajouter Utilisateur' }}
+          </button>
   </div>
 
-  <!-- Liste des users -->
-  <div class="mb-10">
-    <h3 class="text-xl font-bold mb-4 text-gray-800">Liste des utilisateurs</h3>
-    <div *ngIf="loadingUsers" class="text-gray-500">Chargement des utilisateurs...</div>
-    <div *ngIf="usersError" class="text-red-500">{{ usersError }}</div>
-    <div *ngIf="!loadingUsers && users.length === 0" class="text-gray-500">Aucun utilisateur trouvé.</div>
-    <div *ngIf="!loadingUsers && users.length > 0">
-      <table class="w-full border rounded">
+        <div *ngIf="!loadingUsers">
+          <div *ngIf="users && users.length > 0; else emptyUsers">
+            <table class="data-table">
         <thead>
-          <tr class="bg-gray-100">
-            <th class="py-2 px-4">ID</th>
-            <th class="py-2 px-4">Nom</th>
-            <th class="py-2 px-4">Email</th>
-            <th class="py-2 px-4">Rôle</th>
+                <tr>
+                  <th>ID</th>
+                  <th>Nom</th>
+                  <th>Email</th>
+                  <th>Rôle</th>
+                  <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let user of users">
-            <td class="py-2 px-4">{{ user.id }}</td>
-            <td class="py-2 px-4">{{ user.firstName }} {{ user.lastName }}</td>
-            <td class="py-2 px-4">{{ user.email }}</td>
-            <td class="py-2 px-4 capitalize">{{ user.role }}</td>
+                  <td>{{ user.id }}</td>
+                  <td>{{ user.firstName }} {{ user.lastName }}</td>
+                  <td>{{ user.email }}</td>
+                  <td>
+                    <span class="role-badge" [class]="'role-' + user.role">
+                      {{ user.role }}
+                    </span>
+                  </td>
+                  <td>
+                    <button class="btn btn-warning" (click)="editUser(user)" style="margin-right: 10px;">
+                      Modifier
+                    </button>
+                    <button class="btn btn-danger" (click)="deleteUser(user.id)">
+                      Supprimer
+                    </button>
+                  </td>
           </tr>
         </tbody>
       </table>
     </div>
   </div>
-
-  <!-- Formulaire ajout vendor -->
-  <div class="mb-10">
-    <div class="text-center mb-4">
-      <button (click)="toggleVendorForm()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors duration-200">
-        {{ showVendorForm ? 'Annuler' : 'Ajouter un vendor' }}
-      </button>
+      </div>
     </div>
-    <div *ngIf="showVendorForm" class="max-w-lg mx-auto p-4 bg-gray-50 rounded-lg border border-gray-200">
-      <form (ngSubmit)="submitVendor()" #vendorFormRef="ngForm">
-        <div class="mb-4">
-          <label class="block text-gray-700 font-semibold mb-1">Utilisateur (ID)</label>
-          <select class="w-full border rounded px-3 py-2" [(ngModel)]="vendorForm.userId" name="userId" required>
-            <option value="" disabled selected>Choisir un utilisateur</option>
-            <option *ngFor="let user of users" [value]="user.id">{{ user.firstName }} {{ user.lastName }} ({{ user.email }})</option>
-          </select>
+
+    <!-- Products Tab -->
+    <div *ngIf="activeTab === 'products' && !loadingProducts">
+      <div class="content-header">
+        <h1>Gestion des Produits</h1>
+        <p>Gérez le catalogue de produits</p>
+      </div>
+
+      <!-- Edit Product Form -->
+      <div class="content-card" *ngIf="showProductForm">
+        <h3>{{ selectedProduct ? 'Modifier le produit' : 'Créer un nouveau produit' }}</h3>
+        <div class="form-group">
+          <label class="form-label">Nom du produit</label>
+          <input type="text" class="form-input" [(ngModel)]="productForm.name" required>
         </div>
-        <div class="mb-4">
-          <label class="block text-gray-700 font-semibold mb-1">Nom du magasin</label>
-          <input type="text" class="w-full border rounded px-3 py-2" [(ngModel)]="vendorForm.storeName" name="storeName" required />
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea class="form-input" [(ngModel)]="productForm.description" rows="3" required></textarea>
         </div>
-        <div class="mb-4">
-          <label class="block text-gray-700 font-semibold mb-1">Description</label>
-          <textarea class="w-full border rounded px-3 py-2" [(ngModel)]="vendorForm.storeDescription" name="storeDescription" required></textarea>
+        <div class="form-group">
+          <label class="form-label">Prix (€)</label>
+          <input type="number" step="0.01" class="form-input" [(ngModel)]="productForm.price" required>
         </div>
-        <div class="text-center">
-          <button type="submit" [disabled]="addingVendor" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors duration-200">Ajouter</button>
+        <div class="form-actions">
+          <button class="btn btn-primary" (click)="updateProduct()">
+            {{ selectedProduct ? 'Mettre à jour' : 'Créer' }}
+          </button>
+          <button class="btn btn-secondary" (click)="toggleProductForm()">Annuler</button>
         </div>
-        <div *ngIf="vendorMessage" class="mt-2 text-center text-green-600">{{ vendorMessage }}</div>
-      </form>
+      </div>
+
+      <!-- Products List -->
+      <div class="content-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <h3>Produits</h3>
+          <button class="btn btn-primary" (click)="toggleProductForm()">
+            {{ showProductForm ? 'Annuler' : '+ Ajouter Produit' }}
+          </button>
+        </div>
+
+        <div *ngIf="!loadingProducts">
+          <div *ngIf="products && products.length > 0; else emptyProducts">
+            <div class="card-grid">
+              <div class="info-card" *ngFor="let product of products">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px;">
+                  <h4>{{ product.name }}</h4>
+                  <span style="font-size: 18px; font-weight: bold; color: #4f46e5;">{{ product.price }}€</span>
+                </div>
+                <p><strong>ID:</strong> {{ product.id }}</p>
+                <p><strong>Référence:</strong> {{ product.productReference }}</p>
+                <p><strong>Description:</strong> {{ product.description }}</p>
+
+                <div style="margin-top: 15px;">
+                  <button class="btn btn-warning" (click)="editProduct(product)" style="margin-right: 10px;">
+                    Modifier
+                  </button>
+                  <button class="btn btn-danger" (click)="deleteProduct(product.id)">
+                    Supprimer
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-</div> 
+</div>
+
+<!-- Templates -->
+<ng-template #emptyAdmins>
+  <div class="empty-state">
+    <div class="empty-icon">👑</div>
+    <h3>Aucun administrateur</h3>
+    <p>Aucun administrateur n'a été créé pour le moment.</p>
+    <button class="btn btn-primary" (click)="toggleAdminForm()">Créer le premier admin</button>
+  </div>
+</ng-template>
+
+<ng-template #emptyVendors>
+  <div class="empty-state">
+    <div class="empty-icon">🏪</div>
+    <h3>Aucun vendeur</h3>
+    <p>Aucun vendeur n'a été enregistré pour le moment.</p>
+  </div>
+</ng-template>
+
+<ng-template #emptyUsers>
+  <div class="empty-state">
+    <div class="empty-icon">👥</div>
+    <h3>Aucun utilisateur</h3>
+    <p>Aucun utilisateur n'a été enregistré pour le moment.</p>
+    <button class="btn btn-primary" (click)="toggleUserForm()">Créer le premier utilisateur</button>
+  </div>
+</ng-template>
+
+<ng-template #emptyProducts>
+  <div class="empty-state">
+    <div class="empty-icon">📦</div>
+    <h3>Aucun produit</h3>
+    <p>Aucun produit n'a été ajouté au catalogue.</p>
+    <button class="btn btn-primary" (click)="toggleProductForm()">Ajouter le premier produit</button>
+  </div>
+</ng-template>

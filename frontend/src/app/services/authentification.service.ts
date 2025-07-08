@@ -11,7 +11,7 @@ import { Token } from '../models/token';
 export class AuthentificationService {
 
   private apiUrl = 'http://localhost:5000';
-  private readonly _authState = new BehaviorSubject<boolean>(false);  
+  private readonly _authState = new BehaviorSubject<boolean>(false);
 
   private readonly state = {
     $authState: signal<boolean>(false)
@@ -114,11 +114,13 @@ export class AuthentificationService {
   }
 
   getToken(): string {
-    return localStorage.getItem('access_token') ?? '';
+    return localStorage.getItem('admin_token') ?? localStorage.getItem('access_token') ?? '';
   }
 
   logout(): void {
     localStorage.removeItem('access_token');
+    localStorage.removeItem('admin_token');
+    localStorage.removeItem('user_role');
     this.setAuthState(false);
   }
 }

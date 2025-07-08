@@ -6,8 +6,10 @@ import { UserDashboardComponent } from './user-dashboard/user-dashboard.componen
 import { VendorDashboardComponent } from './vendor-dashboard/vendor-dashboard.component';
 import { PaymentComponent } from './payment/payment.component';
 import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
+import { AdminLoginComponent } from './admin-login/admin-login.component';
 import { CartComponent } from './cart/cart.component';
 import { AuthGuard } from './services/auth-guard.service';
+import { AdminGuard } from './services/admin-guard.service';
 import { ProductComponent } from './product/product.component';
 import { ProductDetailComponent } from './product-detail/product-detail.component';
 import { HomeComponent } from './home/home.component';
@@ -17,13 +19,14 @@ export const routes: Routes = [
     { path: '', component: HomeComponent },
     { path: 'register', component: RegisterComponent },
     { path: 'login', component: LoginComponent },
+    { path: 'admin-login', component: AdminLoginComponent },
     { path: 'register-vendor', component: RegisterVendorComponent},
     { path: 'cart', component: CartComponent, canActivate: [AuthGuard] },
     { path: 'product', component: ProductComponent},
     { path: 'product/:id', component: ProductDetailComponent},
     { path: 'user-dashboard', component: UserDashboardComponent},
     { path: 'vendor-dashboard', component:VendorDashboardComponent},
-    { path: 'admin-dashboard', component: AdminDashboardComponent},
+    { path: 'admin-dashboard', component: AdminDashboardComponent, canActivate: [AdminGuard]},
     { path: 'payment', component: PaymentComponent, canActivate: [AuthGuard] }
 
 ];

@@ -32,3 +32,7 @@ Vendor.init({
 });
 
 module.exports = Vendor;
+
+// Association Sequelize avec VendorUser
+const VendorUser = require('./VendorUser');
+Vendor.belongsTo(VendorUser, { foreignKey: 'vendorUserId', as: 'vendorUser' });

@@ -5,6 +5,7 @@ function authRoutes(app) {
     app.post('/register_up', authProxy);
     app.post('/login', authProxy);
     app.post('/login_send', authProxy);
+    app.post('/admin/login', authProxy);
 
     
     app.get('/auth/:id', authProxy);

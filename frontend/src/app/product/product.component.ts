@@ -18,6 +18,8 @@ export class ProductComponent {
   productList: Product[] = [];
   userInfo: string = '';
   imagesrc = 'images/category-thumb-1.jpg';
+  errorMsg: string = '';
+
   constructor(
     private authService: AuthentificationService,
     private requestBuilderService: RequestBuilderService,
@@ -25,12 +27,14 @@ export class ProductComponent {
   ) { }
 
   ngOnInit(): void {
-    this.requestBuilderService.execute('get', '/product', null, true).subscribe({
+    this.requestBuilderService.execute('get', '/vendors/products', null, true).subscribe({
       next: data => {
         this.productList = data.map((product: any) => ({ ...product, quantity: 1 }));
+        this.errorMsg = '';
       },
-      error: () => {
-        console.error('Erreur lors du chargement des produits');
+      error: (err) => {
+        this.errorMsg = 'Erreur lors du chargement des produits : ' + (err?.message || '');
+        console.error('Erreur lors du chargement des produits', err);
       },
     });
   }

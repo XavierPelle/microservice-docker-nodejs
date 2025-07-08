@@ -4,6 +4,9 @@ const VendorController = require('../controller/vendor.controller');
 const router = express.Router();
 const vendorController = new VendorController();
 
+// Route pour récupérer tous les produits de tous les vendeurs (doit être tout en haut)
+router.get('/products', vendorController.getAllProducts);
+
 // Vendor CRUD operations
 router.get('/', vendorController.getAll);
 router.get('/:id', vendorController.getVendor);

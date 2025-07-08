@@ -177,6 +177,53 @@ def login_send():
     return jsonify({"salt": salt}), 200
 
 
+@app.route('/admin/login', methods=['POST'])
+def admin_login():
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password')
+
+    if not email or not password:
+        return jsonify({"error": "Email et mot de passe requis"}), 400
+
+    url = f'http://user-service:5001/users/{email}'
+    response = requests.get(url)
+    
+    if response.status_code != 200:
+        return jsonify({"error": "Erreur lors de la vérification de l'utilisateur"}), 500
+
+    user_data = response.json()
+    password_from_db = user_data.get('password')
+    user_first_name = user_data.get('firstName')
+    user_last_name = user_data.get('lastName')
+    user_id = user_data.get('id')
+    user_role = user_data.get('role', 'user')
+
+    if password != password_from_db:
+        return jsonify({"error": "Nom d'utilisateur ou mot de passe incorrect"}), 401
+
+    # Vérification spécifique pour admin
+    if user_role != 'admin':
+        return jsonify({"error": "Accès réservé aux administrateurs"}), 403
+
+    token_data = {
+        "user_id": user_id,
+        "email": email,
+        "firstName": user_first_name,
+        "lastName": user_last_name,
+        "role": user_role
+    }
+    token_api_url = 'http://token-service:8101/add-token'
+    token_response = requests.post(token_api_url, json=token_data)
+
+    if token_response.status_code != 200:
+        return jsonify({"error": "Erreur lors de la génération du token"}), 500
+
+    token = token_response.json().get('token')
+
+    return jsonify({"access_token": token}), 200
+
+
     # # Vérifier si l'utilisateur existe dans le dictionnaire
     # user = users.get(email)
     

@@ -136,7 +136,7 @@ class AdminController {
     // Admin management functions
     async manageVendors(req, res) {
         try {
-            const { action } = req.query;
+            const action = req.query.action || 'list';
             const { vendorId, status } = req.body;
             
             if (action === 'approve' || action === 'reject') {
@@ -156,7 +156,7 @@ class AdminController {
 
     async manageUsers(req, res) {
         try {
-            const { action } = req.query;
+            const action = req.query.action || 'list';
             
             if (action === 'list') {
                 const response = await axios.get(`${this.userServiceUrl}/users`);
@@ -180,14 +180,14 @@ class AdminController {
 
     async manageProducts(req, res) {
         try {
-            const { action } = req.query;
+            const action = req.query.action || 'list';
             
             if (action === 'list') {
-                const response = await axios.get(`${this.productServiceUrl}/products`);
+                const response = await axios.get(`${this.productServiceUrl}/`);
                 return res.json(response.data);
             } else if (action === 'approve' || action === 'reject') {
                 const { productId, status } = req.body;
-                const response = await axios.put(`${this.productServiceUrl}/products/${productId}/status`, { status });
+                const response = await axios.put(`${this.productServiceUrl}/update/${productId}`, { status });
                 return res.json(response.data);
             } else {
                 return res.status(400).json({ message: 'Invalid action' });
@@ -204,7 +204,7 @@ class AdminController {
             const [usersRes, vendorsRes, productsRes] = await Promise.all([
                 axios.get(`${this.userServiceUrl}/users`),
                 axios.get(`${this.vendorServiceUrl}/vendors`),
-                axios.get(`${this.productServiceUrl}/products`)
+                axios.get(`${this.productServiceUrl}/`)
             ]);
             
             const stats = {

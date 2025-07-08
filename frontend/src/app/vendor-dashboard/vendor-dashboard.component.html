@@ -418,7 +418,7 @@
         <h1>Gestion des Produits</h1>
         <p>Gérez votre catalogue de produits</p>
       </div>
-      
+
       <!-- Add Product Form -->
       <div class="content-card" *ngIf="showAddProductForm">
         <h3>Ajouter un nouveau produit</h3>
@@ -456,10 +456,13 @@
             {{ showAddProductForm ? 'Annuler' : '+ Ajouter un produit' }}
           </button>
         </div>
-        
+
         <div *ngIf="!loadingProducts">
           <div *ngIf="products && products.length > 0; else emptyProducts">
             <div class="product-item" *ngFor="let product of products">
+              <div class="product-avatar">
+                <img [src]="generateProductAvatar(product.name)" [alt]="product.name" class="product-avatar-img">
+              </div>
               <div class="product-info">
                 <div class="product-name">{{ product.name }}</div>
                 <div class="product-details">
@@ -490,12 +493,12 @@
               <span class="order-date">{{ order.date | date:'dd/MM/yyyy' }}</span>
             </div>
             <div class="order-details">
-              <strong>{{ order.customerName }}</strong> - 
-              {{ order.itemsCount }} articles - 
+              <strong>{{ order.customerName }}</strong> -
+              {{ order.itemsCount }} articles -
               Total: {{ order.total }}€
             </div>
             <div style="margin-top: 10px;">
-              <button class="btn btn-success" (click)="updateOrderStatus(order.id, 'shipped')" 
+              <button class="btn btn-success" (click)="updateOrderStatus(order.id, 'shipped')"
                       *ngIf="order.status === 'pending'">
                 Marquer comme expédiée
               </button>
@@ -515,6 +518,15 @@
         <p>Gérez les informations de votre boutique</p>
       </div>
       <div class="content-card">
+        <!-- Infos du vendeur connecté -->
+        <div class="form-group">
+          <label class="form-label">Nom du vendeur</label>
+          <input type="text" class="form-input" [value]="vendorName" readonly>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="text" class="form-input" [value]="vendorEmail" readonly>
+        </div>
         <div class="form-group">
           <label class="form-label">Nom du magasin</label>
           <input type="text" class="form-input" [(ngModel)]="storeInfo.name" placeholder="Nom de votre magasin">
@@ -547,4 +559,4 @@
     <h3>Aucune commande</h3>
     <p>Vous n'avez pas encore reçu de commandes.</p>
   </div>
-</ng-template> 
+</ng-template>
