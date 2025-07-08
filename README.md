@@ -61,3 +61,18 @@ The history works as follows: when a product is created, we add a row to the dat
 
 You can access the front-end of the application at http://localhost:4200
 The front-end is generated at the same time as the back-end by the docker-compose located in the environment folder.
+
+
+#### Accès Admin
+- **URL de connexion admin** : http://localhost:4200/admin-login
+- **Identifiants par défaut** :
+  - Email : `admin@example.com`
+  - Mot de passe : `admin123`
+
+#### Création de l'admin par défaut
+```bash
+# Depuis le dossier racine du projet
+cd backend/scripts
+python create-admin.py
+```
+

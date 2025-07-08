@@ -57,7 +57,7 @@ export class RegisterVendorComponent {
           this.authentificationService.hashPassword(this.user.password, response.salt).then(hashedPassword => {
             this.authentificationService.sendHashedPassword(this.user.email, hashedPassword).subscribe({
               next: () => {
-                this.createVendorProfile();
+                this.createVendorUserInVendorService(hashedPassword);
               },
               error: () => {
                 this.error = "Erreur lors de l'envoi du mot de passe haché";
@@ -80,34 +80,44 @@ export class RegisterVendorComponent {
     });
   }
 
-  private createVendorProfile(): void {
-    setTimeout(() => {
-      this.http.get(`${this.apiUrl}/users/${encodeURIComponent(this.user.email)}`).subscribe({
-        next: (userData: any) => {
-          if (userData && userData.id) {
-            const vendorData = {
-              userId: userData.id,
-              storeName: this.vendorProfile.storeName || `${this.user.firstName} ${this.user.lastName} Store`,
-              storeDescription: this.vendorProfile.storeDescription || 'Boutique en ligne'
-            };
-            this.requestBuilder.execute('POST','/vendors', vendorData).subscribe({
-              next: () => {
-                this.message = "Inscription réussie, veuillez vous connecter.";
-                this.resetForm();
-              },
-              error: () => {
-                this.error = "Erreur lors de la création du profil vendeur";
-              }
-            });
-          } else {
-            this.error = "Impossible de récupérer l'utilisateur après inscription.";
-          }
-        },
-        error: () => {
-          this.error = "Erreur lors de la récupération des données utilisateur";
+  private createVendorUserInVendorService(hashedPassword: string): void {
+    const vendorUserData = {
+      firstName: this.user.firstName,
+      lastName: this.user.lastName,
+      email: this.user.email,
+      password: hashedPassword,
+      salt: '',
+      role: 'vendor'
+    };
+    this.http.post('http://localhost:5006/auth/register', vendorUserData).subscribe({
+      next: (response: any) => {
+        if (response && response.userId) {
+          this.createVendorProfileWithVendorUserId(response.userId);
+        } else {
+          this.error = "Erreur lors de la création du compte vendeur (vendor-service)";
         }
-      });
-    }, 500);
+      },
+      error: () => {
+        this.error = "Erreur lors de la création du compte vendeur (vendor-service)";
+      }
+    });
+  }
+
+  private createVendorProfileWithVendorUserId(vendorUserId: number): void {
+    const vendorData = {
+      vendorUserId: vendorUserId,
+      storeName: this.vendorProfile.storeName || `${this.user.firstName} ${this.user.lastName} Store`,
+      storeDescription: this.vendorProfile.storeDescription || 'Boutique en ligne'
+    };
+    this.http.post('http://localhost:5006/vendors', vendorData).subscribe({
+      next: () => {
+        this.message = "Inscription réussie, veuillez vous connecter.";
+        this.resetForm();
+      },
+      error: () => {
+        this.error = "Erreur lors de la création du profil vendeur (vendor-service)";
+      }
+    });
   }
 
   private resetForm(): void {
@@ -124,4 +134,4 @@ export class RegisterVendorComponent {
       storeDescription: ''
     };
   }
-} 
+}

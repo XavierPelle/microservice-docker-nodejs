@@ -1,1 +1,51 @@
-/* Styles are now inline in the HTML template */ 
+/* Styles are now inline in the HTML template */
+
+/* Styles pour l'avatar des produits */
+.product-avatar {
+  display: flex;
+  align-items: center;
+  margin-right: 15px;
+}
+
+.product-avatar-img {
+  width: 50px;
+  height: 50px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.product-item {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+  transition: background-color 0.2s;
+}
+
+.product-item:hover {
+  background-color: #f8f9fa;
+}
+
+.product-info {
+  flex: 1;
+  margin-right: 15px;
+}
+
+.product-name {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.product-details {
+  color: #666;
+  font-size: 14px;
+}
+
+.product-price {
+  font-weight: 600;
+  color: #28a745;
+  margin-right: 15px;
+  min-width: 80px;
+  text-align: right;
+}

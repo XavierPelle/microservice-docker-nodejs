@@ -2,12 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { UserSigninDTO } from '../models/user';
 import { AuthentificationService } from '../services/authentification.service';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, RouterModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
@@ -40,7 +40,7 @@ export class LoginComponent implements OnInit {
             this.authentificationService.loginWithPassword(this.user.email, hashedPassword).subscribe({
               next: (loginResponse) => {
                 localStorage.setItem('access_token', loginResponse.access_token);
-                
+
                 // Récupérer les informations utilisateur pour déterminer la redirection
                 const userInfo = this.authentificationService.getUserInfo();
                 if (userInfo) {
