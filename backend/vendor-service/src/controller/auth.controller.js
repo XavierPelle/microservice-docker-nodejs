@@ -7,7 +7,7 @@ class AuthController {
     
     async register(req, res) {
         try {
-            const { email, firstName, lastName, role } = req.body;
+            const { email, firstName, lastName, role, userServiceId } = req.body;
             
             // Check if user already exists
             const existingUser = await VendorUser.findOne({ where: { email } });
@@ -24,6 +24,7 @@ class AuthController {
                 firstName,
                 lastName,
                 role: 'vendor',
+                userServiceId: userServiceId || null, // Ajouter userServiceId si fourni
                 salt,
                 password: 'temp' // Will be updated later
             });

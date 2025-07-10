@@ -162,8 +162,8 @@ class AdminController {
                 const response = await axios.get(`${this.userServiceUrl}/users`);
                 return res.json(response.data);
             } else if (action === 'update') {
-                const { userId, ...userData } = req.body;
-                const response = await axios.put(`${this.userServiceUrl}/users/update/${userId}`, userData);
+                const { id, ...userData } = req.body;
+                const response = await axios.put(`${this.userServiceUrl}/users/update/${id}`, userData);
                 return res.json(response.data);
             } else if (action === 'delete') {
                 const { userId } = req.body;
@@ -183,12 +183,13 @@ class AdminController {
             const action = req.query.action || 'list';
             
             if (action === 'list') {
-                const response = await axios.get(`${this.productServiceUrl}/`);
+                // Appeler le vendor-service pour récupérer tous les produits de tous les vendeurs
+                const response = await axios.get(`${this.vendorServiceUrl}/vendors/products`);
                 return res.json(response.data);
             } else if (action === 'approve' || action === 'reject') {
                 const { productId, status } = req.body;
-                const response = await axios.put(`${this.productServiceUrl}/update/${productId}`, { status });
-                return res.json(response.data);
+                // Pour l'instant, on ne gère pas l'approbation/rejet des produits
+                return res.status(400).json({ message: 'Action non supportée pour les produits' });
             } else {
                 return res.status(400).json({ message: 'Invalid action' });
             }
@@ -201,16 +202,15 @@ class AdminController {
     async getDashboardStats(req, res) {
         try {
             // Get counts from various services
-            const [usersRes, vendorsRes, productsRes] = await Promise.all([
+            const [usersRes, vendorsRes] = await Promise.all([
                 axios.get(`${this.userServiceUrl}/users`),
-                axios.get(`${this.vendorServiceUrl}/vendors`),
-                axios.get(`${this.productServiceUrl}/`)
+                axios.get(`${this.vendorServiceUrl}/vendors`)
             ]);
             
             const stats = {
                 totalUsers: usersRes.data.length,
                 totalVendors: vendorsRes.data.length,
-                totalProducts: productsRes.data.length,
+                totalProducts: 0, // On ne compte pas les produits pour l'instant
                 pendingVendorApprovals: vendorsRes.data.filter(v => v.status === 'pending').length,
                 // Add more stats as needed
             };
@@ -219,6 +219,204 @@ class AdminController {
         } catch (error) {
             console.error('Error getting dashboard stats:', error);
             res.status(500).json({ message: 'Failed to get dashboard stats', error: error.message });
+        }
+    }
+
+    // Nouvelles méthodes pour créer des entités
+    async createVendor(req, res) {
+        try {
+            const { firstName, lastName, email, password, storeName, storeDescription } = req.body;
+            
+            // Validation
+            if (!firstName || !lastName || !email || !password) {
+                return res.status(400).json({ message: 'Prénom, nom, email et mot de passe sont obligatoires' });
+            }
+            
+            // 1. Créer l'utilisateur via auth-service
+            const userData = {
+                firstName,
+                lastName,
+                email,
+                role: 'vendor'
+            };
+            
+            const authResponse = await axios.post(`http://auth-service:5004/register`, userData);
+            
+            // 2. Mettre à jour avec le mot de passe
+            await axios.post(`http://auth-service:5004/register_up`, {
+                email,
+                password
+            });
+            
+            // 3. Récupérer l'utilisateur créé pour avoir son ID
+            const userResponse = await axios.get(`${this.userServiceUrl}/users/${email}`);
+            const user = userResponse.data;
+            
+            // 4. Créer l'utilisateur vendeur dans vendor-service
+            const vendorUserData = {
+                firstName,
+                lastName,
+                email,
+                password,
+                userServiceId: user.id,
+                role: 'vendor'
+            };
+            
+            const vendorUserResponse = await axios.post(`${this.vendorServiceUrl}/auth/register`, vendorUserData);
+            
+            // 5. Créer le profil vendeur
+            const vendorData = {
+                vendorUserId: vendorUserResponse.data.userId,
+                storeName: storeName || `${firstName} ${lastName} Store`,
+                storeDescription: storeDescription || 'Boutique créée par l\'admin'
+            };
+            
+            const vendorResponse = await axios.post(`${this.vendorServiceUrl}/vendors`, vendorData);
+            
+            res.status(201).json({
+                message: 'Vendeur créé avec succès',
+                vendor: vendorResponse.data
+            });
+        } catch (error) {
+            console.error('Error creating vendor:', error);
+            res.status(500).json({ 
+                message: 'Erreur lors de la création du vendeur', 
+                error: error.response?.data?.message || error.message 
+            });
+        }
+    }
+
+    async createProduct(req, res) {
+        try {
+            const { name, description, price, quantity } = req.body;
+            
+            // Validation
+            if (!name || !price) {
+                return res.status(400).json({ message: 'Nom et prix sont obligatoires' });
+            }
+            
+            // Trouver ou créer un vendeur "Admin" par défaut
+            let adminVendor = await axios.get(`${this.vendorServiceUrl}/vendors`)
+                .then(response => response.data.find(v => v.storeName === 'Admin Store'))
+                .catch(() => null);
+            
+            if (!adminVendor) {
+                // Créer un vendeur admin par défaut s'il n'existe pas
+                try {
+                    const adminVendorData = {
+                        vendorUserId: 1, // ID par défaut pour admin
+                        storeName: 'Admin Store',
+                        storeDescription: 'Produits créés par l\'administrateur'
+                    };
+                    const adminVendorResponse = await axios.post(`${this.vendorServiceUrl}/vendors`, adminVendorData);
+                    adminVendor = adminVendorResponse.data;
+                } catch (error) {
+                    console.error('Erreur création vendeur admin:', error);
+                    return res.status(500).json({ message: 'Impossible de créer le vendeur admin par défaut' });
+                }
+            }
+            
+            // Créer le produit via vendor-service
+            const productData = {
+                name,
+                description: description || '',
+                price: parseFloat(price),
+                quantity: quantity || 0
+            };
+            
+            const productResponse = await axios.post(`${this.vendorServiceUrl}/vendors/${adminVendor.id}/products`, productData);
+            
+            res.status(201).json({
+                message: 'Produit créé avec succès',
+                product: productResponse.data
+            });
+        } catch (error) {
+            console.error('Error creating product:', error);
+            res.status(500).json({ 
+                message: 'Erreur lors de la création du produit', 
+                error: error.response?.data?.message || error.message 
+            });
+        }
+    }
+
+    async createUser(req, res) {
+        try {
+            const { firstName, lastName, email, password, role } = req.body;
+            
+            // Validation
+            if (!firstName || !lastName || !email || !password) {
+                return res.status(400).json({ message: 'Tous les champs sont obligatoires' });
+            }
+            
+            // Créer l'utilisateur via auth-service
+            const userData = {
+                firstName,
+                lastName,
+                email,
+                role: role || 'user'
+            };
+            
+            // Étape 1: Créer dans auth-service
+            const authResponse = await axios.post(`http://auth-service:5004/register`, userData);
+            
+            // Étape 2: Mettre à jour avec le mot de passe
+            await axios.post(`http://auth-service:5004/register_up`, {
+                email,
+                password
+            });
+            
+            res.status(201).json({
+                message: 'Utilisateur créé avec succès',
+                user: userData
+            });
+        } catch (error) {
+            console.error('Error creating user:', error);
+            res.status(500).json({ 
+                message: 'Erreur lors de la création de l\'utilisateur', 
+                error: error.response?.data?.message || error.message 
+            });
+        }
+    }
+
+    async deleteVendor(req, res) {
+        try {
+            const vendorId = req.params.id;
+            
+            // Supprimer le vendeur via vendor-service
+            await axios.delete(`${this.vendorServiceUrl}/vendors/${vendorId}`);
+            
+            res.json({ message: 'Vendeur supprimé avec succès' });
+        } catch (error) {
+            console.error('Error deleting vendor:', error);
+            res.status(500).json({ 
+                message: 'Erreur lors de la suppression du vendeur', 
+                error: error.response?.data?.message || error.message 
+            });
+        }
+    }
+
+    async deleteProduct(req, res) {
+        try {
+            const productId = req.params.id;
+            
+            // Récupérer le produit pour connaître son vendeur via vendor-service
+            const productsResponse = await axios.get(`${this.vendorServiceUrl}/vendors/products`);
+            const product = productsResponse.data.find(p => p.id == productId);
+            
+            if (!product) {
+                return res.status(404).json({ message: 'Produit non trouvé' });
+            }
+            
+            // Supprimer le produit via vendor-service
+            await axios.delete(`${this.vendorServiceUrl}/vendors/${product.vendorId}/products/${productId}`);
+            
+            res.json({ message: 'Produit supprimé avec succès' });
+        } catch (error) {
+            console.error('Error deleting product:', error);
+            res.status(500).json({ 
+                message: 'Erreur lors de la suppression du produit', 
+                error: error.response?.data?.message || error.message 
+            });
         }
     }
 }

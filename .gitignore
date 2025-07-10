@@ -135,11 +135,25 @@ __pycache__/
 *$py.class
 *.so
 
+# start.sh a ignorer
+backend/admin-service/start.sh
+backend/payment-service/start.sh
+backend/product-service/start.sh
+backend/user-service/start.sh
+backend/transaction-history-service/start.sh
+backend/vendor-product-service/start.sh
+backend/vendor-service/start.sh
+environnement/docker-compose.yaml
+
 # Cart service specific files to ignore
 backend/cart-service/src/controller/cart.controller.js
 backend/cart-service/src/models/Cart.js
 backend/cart-service/src/routes/card.route.js
+backend/cart-service/src/app.js
 backend/cart-service/start.sh
+backend/cart-service/src/config/database.js
+
+
 
 # Auth service cache
 backend/auth-service/__pycache__/
