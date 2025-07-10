@@ -51,13 +51,24 @@ export class ProductComponent {
 
   addToCart(product: Product): void {
     const userInfo = this.authService.getUserInfo();
-    const productWithUserId = { ...product, user_id: userInfo.user_id };
-    this.requestBuilderService.execute('post', '/cart/create', productWithUserId).subscribe({
+
+    // Créer un objet cart avec seulement les champs nécessaires
+    const cartItem = {
+      name: product.name,
+      productReference: product.productReference,
+      price: product.price,
+      quantity: product.quantity || 1,
+      user_id: userInfo.user_id
+    };
+
+    this.requestBuilderService.execute('post', '/cart/create', cartItem).subscribe({
       next: () => {
-        console.log('Ajout au panier réussi', productWithUserId);
+        console.log('Ajout au panier réussi', cartItem);
+        // Optionnel : afficher un message de succès à l'utilisateur
       },
-      error: () => {
-        console.error('Erreur lors de l\'ajout au panier');
+      error: (error) => {
+        console.error('Erreur lors de l\'ajout au panier', error);
+        // Optionnel : afficher un message d'erreur à l'utilisateur
       }
     });
   }
