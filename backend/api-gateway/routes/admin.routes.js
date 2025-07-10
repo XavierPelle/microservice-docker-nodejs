@@ -15,16 +15,21 @@ function adminRoutes(app) {
   
   // Vendor management
   app.get('/admin/vendors', adminCheck, adminProxy);
+  app.post('/admin/vendors', adminCheck, adminProxy);  // Nouvelle route pour créer un vendeur
   app.put('/admin/vendors/:id', adminCheck, adminProxy);
+  app.delete('/admin/vendors/:id', adminCheck, adminProxy);  // Nouvelle route pour supprimer un vendeur
   
   // User management
   app.get('/admin/users', adminCheck, adminProxy);
+  app.post('/admin/users', adminCheck, adminProxy);  // Nouvelle route pour créer un utilisateur
   app.put('/admin/users/:id', adminCheck, adminProxy);
   app.delete('/admin/users/:id', adminCheck, adminProxy);
   
   // Product management
   app.get('/admin/products', adminCheck, adminProxy);
+  app.post('/admin/products', adminCheck, adminProxy);  // Nouvelle route pour créer un produit
   app.put('/admin/products/:id', adminCheck, adminProxy);
+  app.delete('/admin/products/:id', adminCheck, adminProxy);  // Nouvelle route pour supprimer un produit
   
   // Dashboard
   app.get('/admin/dashboard/stats', adminCheck, adminProxy);

@@ -54,6 +54,7 @@ const getUserByEmail = async (req, res) => {
 const updateUser = async (req, res) => {
   try {
       const id = req.params.id;
+      console.log('updateUser body:', req.body); // Ajout du log
       await User.update(req.body, { where: { id: id } });
       res.status(200).json({ message: "User updated !" });
     } catch (err) {

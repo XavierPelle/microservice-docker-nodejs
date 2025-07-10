@@ -27,6 +27,12 @@ export class AdminDashboardComponent implements OnInit {
   adminForm = { userId: '' };
   adminMessage: string = '';
   addingAdmin: boolean = false;
+  nonAdminUsers: any[] = []; // Nouvelle propriété pour les utilisateurs non-admin
+
+  // Ajout d'un nouvel admin
+  showAddAdminForm: boolean = false;
+  addAdminForm = { firstName: '', lastName: '', email: '', password: '' };
+  addAdminMessage: string = '';
 
   // Gestion des vendeurs
   vendors: any[] = [];
@@ -34,6 +40,8 @@ export class AdminDashboardComponent implements OnInit {
   vendorsError: string = '';
   selectedVendor: any = null;
   vendorActionMessage: string = '';
+  showVendorForm: boolean = false;
+  vendorForm = { firstName: '', lastName: '', email: '', password: '', storeName: '', storeDescription: '' };
 
   // Gestion des utilisateurs
   users: any[] = [];
@@ -42,7 +50,7 @@ export class AdminDashboardComponent implements OnInit {
   selectedUser: any = null;
   userActionMessage: string = '';
   showUserForm: boolean = false;
-  userForm = { firstName: '', lastName: '', email: '', role: 'user' };
+  userForm = { firstName: '', lastName: '', email: '', role: 'user', password: '' };
 
   // Gestion des produits
   products: any[] = [];
@@ -51,7 +59,7 @@ export class AdminDashboardComponent implements OnInit {
   selectedProduct: any = null;
   productActionMessage: string = '';
   showProductForm: boolean = false;
-  productForm = { name: '', description: '', price: 0 };
+  productForm = { name: '', description: '', price: 0, quantity: 0 };
 
   constructor(private adminService: AdminService, private router: Router) {}
 
@@ -86,9 +94,10 @@ export class AdminDashboardComponent implements OnInit {
   // ===== GESTION DES ADMINS =====
   loadAdmins() {
     this.loadingAdmins = true;
-    this.adminService.getAllAdmins().subscribe({
-      next: (admins: any[]) => {
-        this.admins = admins;
+    // Au lieu d'appeler getAllAdmins(), on filtre les utilisateurs avec le rôle admin
+    this.adminService.getAllUsers().subscribe({
+      next: (users: any[]) => {
+        this.admins = users.filter(user => user.role === 'admin');
         this.loadingAdmins = false;
       },
       error: () => {
@@ -107,34 +116,87 @@ export class AdminDashboardComponent implements OnInit {
   createAdmin() {
     this.addingAdmin = true;
     this.adminMessage = '';
-    this.adminService.createAdmin(Number(this.adminForm.userId)).subscribe({
+
+    // Trouver l'utilisateur sélectionné
+    const selectedUser = this.users.find(user => user.id === Number(this.adminForm.userId));
+
+    if (!selectedUser) {
+      this.adminMessage = 'Utilisateur non trouvé.';
+      this.addingAdmin = false;
+      return;
+    }
+
+    // Mettre à jour le rôle de l'utilisateur vers admin
+    this.adminService.updateUser(selectedUser.id, { ...selectedUser, role: 'admin' }).subscribe({
       next: () => {
         this.adminMessage = 'Admin créé avec succès !';
         this.addingAdmin = false;
         this.toggleAdminForm();
         this.loadAdmins();
+        this.loadUsers(); // Recharger aussi la liste des utilisateurs
         this.loadStats();
       },
-      error: () => {
-        this.adminMessage = 'Erreur lors de la création de l\'admin.';
+      error: (err) => {
+        this.adminMessage = 'Erreur lors de la création de l\'admin : ' + (err?.error?.message || JSON.stringify(err));
         this.addingAdmin = false;
       }
     });
   }
 
   deleteAdmin(adminId: number) {
-    if (confirm('Êtes-vous sûr de vouloir supprimer cet admin ?')) {
-      this.adminService.deleteAdmin(adminId).subscribe({
+    if (confirm('Êtes-vous sûr de vouloir retirer les droits d\'admin de cet utilisateur ?')) {
+      // Trouver l'admin à supprimer
+      const adminToRemove = this.admins.find(admin => admin.id === adminId);
+
+      if (!adminToRemove) {
+        this.adminMessage = 'Admin non trouvé.';
+        return;
+      }
+
+      // Mettre à jour le rôle de l'utilisateur vers user
+      this.adminService.updateUser(adminToRemove.id, { ...adminToRemove, role: 'user' }).subscribe({
         next: () => {
-          this.adminMessage = 'Admin supprimé avec succès !';
+          this.adminMessage = 'Droits d\'admin retirés avec succès !';
           this.loadAdmins();
+          this.loadUsers(); // Recharger aussi la liste des utilisateurs
           this.loadStats();
         },
         error: () => {
-          this.adminMessage = 'Erreur lors de la suppression de l\'admin.';
+          this.adminMessage = 'Erreur lors du retrait des droits d\'admin.';
         }
       });
     }
+  }
+
+  // Ajout d'un nouvel admin
+  addAdmin() {
+    this.addingAdmin = true;
+    this.addAdminMessage = '';
+    const newAdmin = {
+      firstName: this.addAdminForm.firstName,
+      lastName: this.addAdminForm.lastName,
+      email: this.addAdminForm.email,
+      password: this.addAdminForm.password,
+      role: 'admin'
+    };
+    this.adminService.createUser(newAdmin).subscribe({
+      next: () => {
+        this.addAdminMessage = 'Administrateur ajouté avec succès !';
+        this.addingAdmin = false;
+        this.showAddAdminForm = false;
+        this.loadUsers();
+        this.loadAdmins();
+      },
+      error: (err) => {
+        this.addAdminMessage = 'Erreur lors de l\'ajout de l\'admin : ' + (err?.error?.message || JSON.stringify(err));
+        this.addingAdmin = false;
+      }
+    });
+  }
+
+  resetAddAdminForm() {
+    this.addAdminForm = { firstName: '', lastName: '', email: '', password: '' };
+    this.addAdminMessage = '';
   }
 
   // ===== GESTION DES VENDEURS =====
@@ -150,6 +212,48 @@ export class AdminDashboardComponent implements OnInit {
         this.loadingVendors = false;
       }
     });
+  }
+
+  toggleVendorForm() {
+    this.showVendorForm = !this.showVendorForm;
+    this.vendorActionMessage = '';
+    this.selectedVendor = null;
+    this.vendorForm = { firstName: '', lastName: '', email: '', password: '', storeName: '', storeDescription: '' };
+  }
+
+  createVendor() {
+    if (!this.vendorForm.firstName || !this.vendorForm.lastName || !this.vendorForm.email || !this.vendorForm.password) {
+      this.vendorActionMessage = 'Tous les champs sont obligatoires pour créer un vendeur.';
+      return;
+    }
+
+    this.adminService.createVendor(this.vendorForm).subscribe({
+      next: () => {
+        this.vendorActionMessage = 'Vendeur créé avec succès !';
+        this.showVendorForm = false;
+        this.loadVendors();
+        this.loadUsers();
+        this.loadStats();
+      },
+      error: (err) => {
+        this.vendorActionMessage = 'Erreur lors de la création du vendeur : ' + (err?.error?.message || JSON.stringify(err));
+      }
+    });
+  }
+
+  deleteVendor(vendorId: number) {
+    if (confirm('Êtes-vous sûr de vouloir supprimer ce vendeur ?')) {
+      this.adminService.deleteVendor(vendorId).subscribe({
+        next: () => {
+          this.vendorActionMessage = 'Vendeur supprimé avec succès !';
+          this.loadVendors();
+          this.loadStats();
+        },
+        error: () => {
+          this.vendorActionMessage = 'Erreur lors de la suppression du vendeur.';
+        }
+      });
+    }
   }
 
   approveVendor(vendorId: number) {
@@ -184,6 +288,7 @@ export class AdminDashboardComponent implements OnInit {
     this.adminService.getAllUsers().subscribe({
       next: (users: any[]) => {
         this.users = users;
+        this.nonAdminUsers = users.filter(user => user.role !== 'admin'); // Mettre à jour les utilisateurs non-admin
         this.loadingUsers = false;
       },
       error: () => {
@@ -196,13 +301,33 @@ export class AdminDashboardComponent implements OnInit {
   toggleUserForm() {
     this.showUserForm = !this.showUserForm;
     this.userActionMessage = '';
-    this.userForm = { firstName: '', lastName: '', email: '', role: 'user' };
+    this.selectedUser = null;
+    this.userForm = { firstName: '', lastName: '', email: '', role: 'user', password: '' };
   }
 
   editUser(user: any) {
     this.selectedUser = user;
-    this.userForm = { ...user };
+    this.userForm = { ...user, password: '' }; // Ne pas pré-remplir le mot de passe
     this.showUserForm = true;
+  }
+
+  createUser() {
+    if (!this.userForm.firstName || !this.userForm.lastName || !this.userForm.email || !this.userForm.password) {
+      this.userActionMessage = 'Tous les champs sont obligatoires.';
+      return;
+    }
+
+    this.adminService.createUser(this.userForm).subscribe({
+      next: () => {
+        this.userActionMessage = 'Utilisateur créé avec succès !';
+        this.showUserForm = false;
+        this.loadUsers();
+        this.loadStats();
+      },
+      error: (err) => {
+        this.userActionMessage = 'Erreur lors de la création de l\'utilisateur : ' + (err?.error?.message || JSON.stringify(err));
+      }
+    });
   }
 
   updateUser() {
@@ -252,13 +377,33 @@ export class AdminDashboardComponent implements OnInit {
   toggleProductForm() {
     this.showProductForm = !this.showProductForm;
     this.productActionMessage = '';
-    this.productForm = { name: '', description: '', price: 0 };
+    this.selectedProduct = null;
+    this.productForm = { name: '', description: '', price: 0, quantity: 0 };
   }
 
   editProduct(product: any) {
     this.selectedProduct = product;
     this.productForm = { ...product };
     this.showProductForm = true;
+  }
+
+  createProduct() {
+    if (!this.productForm.name || !this.productForm.price || !this.productForm.quantity) {
+      this.productActionMessage = 'Nom, prix et quantité sont obligatoires.';
+      return;
+    }
+
+    this.adminService.createProduct(this.productForm).subscribe({
+      next: () => {
+        this.productActionMessage = 'Produit créé avec succès !';
+        this.showProductForm = false;
+        this.loadProducts();
+        this.loadStats();
+      },
+      error: (err) => {
+        this.productActionMessage = 'Erreur lors de la création du produit : ' + (err?.error?.message || JSON.stringify(err));
+      }
+    });
   }
 
   updateProduct() {
