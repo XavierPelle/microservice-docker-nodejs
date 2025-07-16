@@ -16,21 +16,20 @@ export class UserDashboardComponent implements OnInit {
   editUser: any = {};
   activeTab: string = 'profile';
   
-  // Panier
+
   cartItems: any[] = [];
   loadingCart: boolean = false;
 
-  // Historique
+
   transactions: any[] = [];
   loadingHistory: boolean = false;
 
-  // Statistiques
   totalOrders: number = 0;
   totalSpent: number = 0;
   cartItemsCount: number = 0;
   loadingStats: boolean = false;
 
-  // UI states
+
   updating: boolean = false;
   deleting: boolean = false;
   errorMessage: string = '';
@@ -61,7 +60,6 @@ export class UserDashboardComponent implements OnInit {
     if (tab === 'stats') this.loadStatsData();
   }
 
-  // Panier
   loadCartData(): void {
     if (!this.user?.user_id) return;
     this.loadingCart = true;
@@ -79,7 +77,6 @@ export class UserDashboardComponent implements OnInit {
     });
   }
 
-  // Historique
   loadHistoryData(): void {
     if (!this.user?.user_id) return;
     this.loadingHistory = true;
@@ -148,7 +145,6 @@ export class UserDashboardComponent implements OnInit {
         this.deleting = false;
         alert('Compte supprimé avec succès. Vous allez être déconnecté.');
         this.authService.logout();
-        // Redirect to home or login
         window.location.href = '/';
       },
       error: (error: any) => {
