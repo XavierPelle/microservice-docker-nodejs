@@ -4,6 +4,8 @@ import { RequestBuilderService } from '../services/request-builder.service';
 import { Product } from '../models/product';
 import { CommonModule } from '@angular/common';
 import { AuthentificationService } from '../services/authentification.service';
+import { CartService } from '../services/cart.service';
+
 
 @Component({
   selector: 'app-product-detail',
@@ -20,11 +22,12 @@ export class ProductDetailComponent implements OnInit {
     private route: ActivatedRoute,
     private requestBuilderService: RequestBuilderService,
     private authService: AuthentificationService,
+    private cartService: CartService
   ) { }
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
-    this.requestBuilderService.execute('get', `/product/${id}`, null, true).subscribe({
+    this.requestBuilderService.execute('get', `/vendors/product/${id}`, null, true).subscribe({
       next: (data: Product) => {
         this.product = data;
       },
@@ -33,27 +36,25 @@ export class ProductDetailComponent implements OnInit {
       },
     });
   }
-
-  addToCart(product: Product): void {
-    const userInfo = this.authService.getUserInfo();
-
-    // Créer un objet cart avec seulement les champs nécessaires
-    const cartItem = {
-      name: product.name,
-      productReference: product.productReference,
-      price: product.price,
-      quantity: 1,
-      user_id: userInfo.user_id
-    };
-
-    this.requestBuilderService.execute('post', '/cart/create', cartItem).subscribe({
-      next: () => {
-        console.log('Ajout au panier réussi', cartItem);
-      },
-      error: (error) => {
-        console.error('Erreur lors de l\'ajout au panier', error);
-      }
-    });
+  getImageUrl(imagePath?: string | null): string {
+    if (!imagePath) {
+      return 'assets/images/default.jpg';
+    }
+    return `http://localhost:5006${imagePath}`;
   }
+
+addToCart(product: Product): void {
+  const userInfo = this.authService.getUserInfo();
+  const newCartItem = { ...product, user_id: userInfo.user_id, quantity: product.quantity || 1 };
+  console.log(newCartItem)
+  this.requestBuilderService.execute('post', '/cart/create', newCartItem).subscribe({
+    next: () => {
+      this.cartService.addItem(newCartItem);
+    },
+    error: () => {
+      console.error('Erreur lors de l\'ajout au panier.');
+    }
+  });
+}
 }
 

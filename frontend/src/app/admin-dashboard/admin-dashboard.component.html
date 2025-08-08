@@ -401,9 +401,6 @@
     <div class="sidebar-header">
       <h2>Dashboard Admin</h2>
       <p>Administration du système</p>
-      <button class="logout-btn" (click)="logout()">
-        🚪 Déconnexion
-      </button>
     </div>
     <ul class="nav-menu">
       <li class="nav-item">
@@ -490,15 +487,15 @@
       <div class="content-card">
         <div class="stats-grid">
           <div class="stat-card">
-            <div class="stat-number">{{ stats?.totalUsers || 0 }}</div>
+            <div class="stat-number">1</div>
             <div class="stat-label">Utilisateurs</div>
           </div>
           <div class="stat-card">
-            <div class="stat-number">{{ stats?.totalVendors || 0 }}</div>
+            <div class="stat-number">1</div>
             <div class="stat-label">Vendeurs</div>
           </div>
           <div class="stat-card">
-            <div class="stat-number">{{ stats?.totalProducts || 0 }}</div>
+            <div class="stat-number">1</div>
             <div class="stat-label">Produits</div>
           </div>
         </div>
@@ -652,22 +649,14 @@
               <div class="info-card" *ngFor="let vendor of vendors">
                 <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px;">
                   <h4>{{ vendor.storeName }}</h4>
-                  <span class="status-badge" [class]="'status-' + vendor.status">
-                    {{ vendor.status }}
-                  </span>
                 </div>
                 <p><strong>ID:</strong> {{ vendor.id }}</p>
                 <p><strong>Vendeur ID:</strong> {{ vendor.vendorUserId }}</p>
                 <p><strong>Description:</strong> {{ vendor.storeDescription || 'Aucune description' }}</p>
 
                 <div style="margin-top: 15px;">
-                  <button class="btn btn-success" (click)="approveVendor(vendor.id)"
-                          *ngIf="vendor.status === 'pending'" style="margin-right: 10px;">
-                    Approuver
-                  </button>
-                  <button class="btn btn-warning" (click)="rejectVendor(vendor.id)"
-                          *ngIf="vendor.status === 'pending'" style="margin-right: 10px;">
-                    Rejeter
+                  <button class="btn btn-danger" (click)="deleteVendor(vendor.id)">
+                    Supprimer
                   </button>
                   <button class="btn btn-danger" (click)="deleteVendor(vendor.id)">
                     Supprimer

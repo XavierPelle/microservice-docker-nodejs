@@ -1,0 +1,226 @@
+/* Couleurs principales */
+:root {
+    --primary-blue: #0d6efd;
+    --accent-yellow: #ffc107;
+    --text-dark: #1f1f1f;
+    --bg-light: #f9f9f9;
+    --border-color: #e0e0e0;
+  }
+  
+  /* Conteneur principal */
+  .payment-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: var(--bg-light);
+    padding: 2rem;
+    font-family: 'Segoe UI', sans-serif;
+    color: var(--text-dark);
+  }
+  
+  .payment-content {
+    background: #fff;
+    border-radius: 1rem;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    width: 100%;
+    max-width: 600px;
+    padding: 2rem;
+  }
+  
+  /* Header */
+  .payment-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  .payment-icon svg {
+    width: 48px;
+    height: 48px;
+    color: var(--primary-blue);
+  }
+  .payment-title {
+    font-size: 1.75rem;
+    margin: 0.5rem 0;
+    color: var(--primary-blue);
+  }
+  .payment-subtitle {
+    color: #666;
+    font-size: 1rem;
+  }
+  
+  /* Carte de paiement */
+  .payment-card {
+    margin-bottom: 2rem;
+  }
+  .payment-form .form-section {
+    margin-bottom: 1.5rem;
+  }
+  .form-label {
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--primary-blue);
+  }
+  .label-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 0.5rem;
+  }
+  .form-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+  }
+  .form-input:focus {
+    outline: none;
+    border-color: var(--accent-yellow);
+  }
+  
+  /* Affichage du montant */
+  .amount-display {
+    display: flex;
+    align-items: center;
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--primary-blue);
+    margin-bottom: 1rem;
+  }
+  .currency-symbol {
+    margin-right: 0.3rem;
+  }
+  
+  /* Méthodes de paiement */
+  .payment-methods {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .payment-method-option {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: border-color 0.3s, background-color 0.3s;
+  }
+  .payment-method-option.selected {
+    border-color: var(--accent-yellow);
+    background-color: #fffbe6;
+  }
+  .method-icon svg {
+    width: 32px;
+    height: 32px;
+    margin-right: 1rem;
+  }
+  .method-info {
+    flex-grow: 1;
+  }
+  .method-name {
+    font-weight: bold;
+    font-size: 1rem;
+  }
+  .method-desc {
+    font-size: 0.9rem;
+    color: #666;
+  }
+  .method-radio input {
+    transform: scale(1.2);
+  }
+  
+  /* Bouton de paiement */
+  .payment-button {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.1rem;
+    background-color: var(--primary-blue);
+    color: #0b2dc8;
+    border: none;
+    border-radius: 0.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s;
+    position: relative;
+  }
+  .payment-button:hover {
+    background-color: #084298;
+  }
+  .button-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 0.5rem;
+  }
+  .button-loader {
+    display: none;
+    position: absolute;
+    right: 1rem;
+  }
+  .payment-button.loading .button-loader {
+    display: inline-block;
+  }
+  .spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #fff;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  
+  /* Messages */
+  .payment-message {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 1px solid var(--border-color);
+  }
+  .payment-message.success {
+    background-color: #e6ffed;
+    border-color: #b7eb8f;
+    color: #237804;
+  }
+  .payment-message:not(.success) {
+    background-color: #fff1f0;
+    border-color: #ffa39e;
+    color: #cf1322;
+  }
+  .message-icon svg {
+    width: 20px;
+    height: 20px;
+  }
+  
+  /* Infos sécurité */
+  .security-info {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    font-size: 0.9rem;
+    color: #555;
+  }
+  .security-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .security-icon {
+    width: 20px;
+    height: 20px;
+    color: var(--accent-yellow);
+  }
+  
+  /* Spinner animation */
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }

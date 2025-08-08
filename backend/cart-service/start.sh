@@ -15,5 +15,5 @@ npm install
 
 npx tsc
 
-node dist/app.js 
+npx ts-node src/app.ts 
 

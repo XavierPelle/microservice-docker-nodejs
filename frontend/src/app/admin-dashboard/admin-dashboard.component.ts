@@ -27,14 +27,13 @@ export class AdminDashboardComponent implements OnInit {
   adminForm = { userId: '' };
   adminMessage: string = '';
   addingAdmin: boolean = false;
-  nonAdminUsers: any[] = []; 
+  nonAdminUsers: any[] = []; // Nouvelle propriété pour les utilisateurs non-admin
 
-
+  // Ajout d'un nouvel admin
   showAddAdminForm: boolean = false;
   addAdminForm = { firstName: '', lastName: '', email: '', password: '' };
   addAdminMessage: string = '';
 
-  
   vendors: any[] = [];
   loadingVendors: boolean = true;
   vendorsError: string = '';
@@ -85,7 +84,6 @@ export class AdminDashboardComponent implements OnInit {
         this.loadingStats = false;
       },
       error: () => {
-        this.statsError = 'Erreur lors du chargement des statistiques.';
         this.loadingStats = false;
       }
     });
@@ -94,7 +92,7 @@ export class AdminDashboardComponent implements OnInit {
  
   loadAdmins() {
     this.loadingAdmins = true;
-
+    // Au lieu d'appeler getAllAdmins(), on filtre les utilisateurs avec le rôle admin
     this.adminService.getAllUsers().subscribe({
       next: (users: any[]) => {
         this.admins = users.filter(user => user.role === 'admin');
@@ -126,14 +124,14 @@ export class AdminDashboardComponent implements OnInit {
       return;
     }
 
-   
+    // Mettre à jour le rôle de l'utilisateur vers admin
     this.adminService.updateUser(selectedUser.id, { ...selectedUser, role: 'admin' }).subscribe({
       next: () => {
         this.adminMessage = 'Admin créé avec succès !';
         this.addingAdmin = false;
         this.toggleAdminForm();
         this.loadAdmins();
-        this.loadUsers();
+        this.loadUsers(); // Recharger aussi la liste des utilisateurs
         this.loadStats();
       },
       error: (err) => {
@@ -145,7 +143,7 @@ export class AdminDashboardComponent implements OnInit {
 
   deleteAdmin(adminId: number) {
     if (confirm('Êtes-vous sûr de vouloir retirer les droits d\'admin de cet utilisateur ?')) {
-    
+      // Trouver l'admin à supprimer
       const adminToRemove = this.admins.find(admin => admin.id === adminId);
 
       if (!adminToRemove) {
@@ -153,12 +151,12 @@ export class AdminDashboardComponent implements OnInit {
         return;
       }
 
-      
+      // Mettre à jour le rôle de l'utilisateur vers user
       this.adminService.updateUser(adminToRemove.id, { ...adminToRemove, role: 'user' }).subscribe({
         next: () => {
           this.adminMessage = 'Droits d\'admin retirés avec succès !';
           this.loadAdmins();
-          this.loadUsers(); 
+          this.loadUsers(); // Recharger aussi la liste des utilisateurs
           this.loadStats();
         },
         error: () => {
@@ -168,7 +166,7 @@ export class AdminDashboardComponent implements OnInit {
     }
   }
 
-  
+  // Ajout d'un nouvel admin
   addAdmin() {
     this.addingAdmin = true;
     this.addAdminMessage = '';
@@ -199,7 +197,7 @@ export class AdminDashboardComponent implements OnInit {
     this.addAdminMessage = '';
   }
 
-
+  // ===== GESTION DES VENDEURS =====
   loadVendors() {
     this.loadingVendors = true;
     this.adminService.getAllVendors().subscribe({
@@ -288,7 +286,7 @@ export class AdminDashboardComponent implements OnInit {
     this.adminService.getAllUsers().subscribe({
       next: (users: any[]) => {
         this.users = users;
-        this.nonAdminUsers = users.filter(user => user.role !== 'admin'); 
+        this.nonAdminUsers = users.filter(user => user.role !== 'admin'); // Mettre à jour les utilisateurs non-admin
         this.loadingUsers = false;
       },
       error: () => {
@@ -307,7 +305,7 @@ export class AdminDashboardComponent implements OnInit {
 
   editUser(user: any) {
     this.selectedUser = user;
-    this.userForm = { ...user, password: '' }; 
+    this.userForm = { ...user, password: '' }; // Ne pas pré-remplir le mot de passe
     this.showUserForm = true;
   }
 
@@ -368,7 +366,6 @@ export class AdminDashboardComponent implements OnInit {
         this.loadingProducts = false;
       },
       error: () => {
-        this.productsError = 'Erreur lors du chargement des produits.';
         this.loadingProducts = false;
       }
     });

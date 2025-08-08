@@ -13,17 +13,17 @@ TransactionHistory.init({
 
     idCart: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
     },
 
     productName: {
         type: DataTypes.STRING(100),
-        allowNull: false,
+        allowNull: true,
     },
 
     productReference: {
-        type: DataTypes.STRING(20),
-        allowNull: false,
+        type: DataTypes.STRING(50),
+        allowNull: true,
     },
 
     price: {
@@ -43,7 +43,7 @@ TransactionHistory.init({
 
     commandeReference: {
         type: DataTypes.STRING(30),
-        allowNull: false,
+        allowNull: true,
     },
 
 

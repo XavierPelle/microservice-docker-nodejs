@@ -7,4 +7,5 @@ module.exports = {
   TOKEN_API_URL: 'http://token-service:8101',
   ADMIN_API_URL: 'http://admin-service:5007',
   VENDOR_API_URL: 'http://vendor-service:5006',
+  PAYEMENT_API_URL: 'http://payment-service:5008',
 }

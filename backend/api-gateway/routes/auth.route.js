@@ -8,7 +8,7 @@ function authRoutes(app) {
     app.post('/admin/login', authProxy);
 
     
-    app.get('/auth/:id', authProxy);
+    //app.get('/auth/:id', authProxy);
 }
 
 module.exports = { authRoutes };
