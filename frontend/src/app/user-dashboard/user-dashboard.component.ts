@@ -21,22 +21,21 @@ export class UserDashboardComponent implements OnInit {
   user: any = null;
   editUser: any = {};
   activeTab: string = 'profile';
-
+  
   // Panier
   cartItems: any[] = [];
   loadingCart: boolean = false;
 
-  // Historique
+
   transactions: any[] = [];
   loadingHistory: boolean = false;
 
-  // Statistiques
   totalOrders: number = 0;
   totalSpent: number = 0;
   cartItemsCount: number = 0;
   loadingStats: boolean = false;
 
-  // UI states
+
   updating: boolean = false;
   deleting: boolean = false;
   errorMessage: string = '';
@@ -67,7 +66,6 @@ export class UserDashboardComponent implements OnInit {
     if (tab === 'stats') this.loadStatsData();
   }
 
-  // Panier
   loadCartData(): void {
     if (!this.user?.user_id) return;
     this.loadingCart = true;
@@ -85,76 +83,6 @@ export class UserDashboardComponent implements OnInit {
     });
   }
 
-  generatePdf(transaction: any): void {
-    const totalPrice = (transaction.price * transaction.quantity).toFixed(2);
-  
-    // Conversion de la date ISO en format ddmmyyyy
-    const date = new Date(transaction.createdAt);
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = date.getFullYear();
-    const formattedDate = `${day}/${month}/${year}`;
-  
-    const docDefinition = {
-      content: [
-        { text: 'Reçu de commande', style: 'header', alignment: 'center' },
-        { text: `Commande N°: ${transaction.id}`, margin: [0, 20, 0, 5] },
-        { text: `Date : ${formattedDate}`, margin: [0, 0, 0, 5] },
-        { text: `Client : ${this.user.first_name || 'Nom Client'}`, margin: [0, 0, 0, 15] },
-  
-        {
-          table: {
-            headerRows: 1,
-            widths: ['*', 'auto', 'auto', 'auto'],
-            body: [
-              [
-                { text: 'Produit', style: 'tableHeader', alignment: 'center' },
-                { text: 'Quantité', style: 'tableHeader', alignment: 'center' },
-                { text: 'Prix unitaire', style: 'tableHeader', alignment: 'center' },
-                { text: 'Total', style: 'tableHeader', alignment: 'center' }
-              ],
-              [
-                { text: transaction.productName, alignment: 'center' },
-                { text: transaction.quantity.toString(), alignment: 'center' },
-                { text: `${transaction.price.toFixed(2)} €`, alignment: 'center' },
-                { text: `${totalPrice} €`, alignment: 'center' }
-              ]
-            ]
-          },
-          layout: 'lightHorizontalLines'
-        },
-  
-        { text: `Montant total : ${totalPrice} €`, style: 'total', margin: [0, 15, 0, 30] },
-  
-        { text: 'Merci pour votre commande !', style: 'footer', alignment: 'center' }
-      ],
-      styles: {
-        header: {
-          fontSize: 18,
-          bold: true,
-          margin: [0, 0, 0, 10]
-        },
-        tableHeader: {
-          bold: true,
-          fontSize: 12,
-          color: 'white',
-          fillColor: '#2980b9'
-        },
-        total: {
-          bold: true,
-          fontSize: 14
-        },
-        footer: {
-          fontSize: 10,
-          italics: true,
-          color: 'gray'
-        }
-      }
-    };
-  
-    pdfMake.createPdf(docDefinition as any).download(`commande-${transaction.id}.pdf`);
-  }
-  
   // Historique
   loadHistoryData(): void {
     if (!this.user?.user_id) return;
@@ -233,4 +161,4 @@ export class UserDashboardComponent implements OnInit {
       }
     });
   }
-}
+} 

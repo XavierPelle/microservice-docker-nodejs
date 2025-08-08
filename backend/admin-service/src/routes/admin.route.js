@@ -14,12 +14,20 @@ router.get('/admins/user/:userId', adminController.getAdminByUserId.bind(adminCo
 
 // Admin-specific management routes
 router.get('/vendors', adminController.manageVendors.bind(adminController));
+router.post('/vendors', adminController.createVendor.bind(adminController));  // Nouvelle route
 router.put('/vendors/:id', adminController.manageVendors.bind(adminController));
+router.delete('/vendors/:id', adminController.deleteVendor.bind(adminController));  // Nouvelle route
+
 router.get('/users', adminController.manageUsers.bind(adminController));
+router.post('/users', adminController.createUser.bind(adminController));  // Nouvelle route
 router.put('/users/:id', adminController.manageUsers.bind(adminController));
 router.delete('/users/:id', adminController.manageUsers.bind(adminController));
+
 router.get('/products', adminController.manageProducts.bind(adminController));
+router.post('/products', adminController.createProduct.bind(adminController));  // Nouvelle route
 router.put('/products/:id', adminController.manageProducts.bind(adminController));
+router.delete('/products/:id', adminController.deleteProduct.bind(adminController));  // Nouvelle route
+
 router.get('/dashboard/stats', adminController.getDashboardStats.bind(adminController));
 
 module.exports = router;

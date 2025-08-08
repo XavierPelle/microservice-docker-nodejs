@@ -33,7 +33,7 @@ def create_admin_user():
         response = requests.post(f"{AUTH_SERVICE_URL}/register", json=user_data)
         
         if response.status_code == 201:
-            print("✅ Utilisateur admin créé avec succès")
+            print("Utilisateur admin créé avec succès")
             
             # Maintenant mettre à jour avec le mot de passe
             update_data = {
@@ -43,29 +43,29 @@ def create_admin_user():
             update_response = requests.post(f"{AUTH_SERVICE_URL}/register_up", json=update_data)
             
             if update_response.status_code == 201:
-                print("✅ Mot de passe admin configuré avec succès")
+                print(" Mot de passe admin configuré avec succès")
                 return True
             else:
-                print(f"❌ Erreur lors de la configuration du mot de passe: {update_response.status_code}")
+                print(f" Erreur lors de la configuration du mot de passe: {update_response.status_code}")
                 return False
         
         if response.status_code == 201:
-            print("✅ Utilisateur admin créé avec succès")
+            print(" Utilisateur admin créé avec succès")
             return True
         elif response.status_code == 400 and "déjà existant" in response.text:
-            print("⚠️  L'utilisateur admin existe déjà")
+            print("  L'utilisateur admin existe déjà")
             return True
         else:
-            print(f"❌ Erreur lors de la création de l'utilisateur: {response.status_code}")
+            print(f" Erreur lors de la création de l'utilisateur: {response.status_code}")
             print(response.text)
             return False
             
     except requests.exceptions.ConnectionError:
-        print("❌ Impossible de se connecter au service d'authentification")
+        print(" Impossible de se connecter au service d'authentification")
         print("Assurez-vous que les services sont démarrés avec docker-compose")
         return False
     except Exception as e:
-        print(f"❌ Erreur inattendue: {e}")
+        print(f" Erreur inattendue: {e}")
         return False
 
 def test_admin_login():
@@ -81,39 +81,39 @@ def test_admin_login():
         
         if response.status_code == 200:
             token = response.json().get("access_token")
-            print("✅ Connexion admin testée avec succès")
+            print(" Connexion admin testée avec succès")
             print(f"Token: {token[:20]}...")
             return True
         else:
-            print(f"❌ Erreur lors du test de connexion: {response.status_code}")
+            print(f" Erreur lors du test de connexion: {response.status_code}")
             print(response.text)
             return False
             
     except requests.exceptions.ConnectionError:
-        print("❌ Impossible de se connecter au service d'authentification")
+        print(" Impossible de se connecter au service d'authentification")
         return False
     except Exception as e:
-        print(f"❌ Erreur inattendue: {e}")
+        print(f"Erreur inattendue: {e}")
         return False
 
 def main():
-    print("🔧 Création de l'administrateur par défaut")
+    print(" Création de l'administrateur par défaut")
     print("=" * 50)
     
     # Créer l'utilisateur admin
     if create_admin_user():
-        print("\n🔐 Test de connexion admin...")
+        print("\n Test de connexion admin...")
         if test_admin_login():
-            print("\n✅ Configuration admin terminée avec succès!")
-            print(f"\n📋 Informations de connexion:")
+            print("\n Configuration admin terminée avec succès!")
+            print(f"\n Informations de connexion:")
             print(f"   Email: {ADMIN_EMAIL}")
             print(f"   Mot de passe: {ADMIN_PASSWORD}")
-            print(f"\n🌐 Accès frontend: http://localhost:4200/admin-login")
+            print(f"\n Accès frontend: http://localhost:4200/admin-login")
         else:
-            print("\n❌ Échec du test de connexion")
+            print("\n Échec du test de connexion")
             sys.exit(1)
     else:
-        print("\n❌ Échec de la création de l'admin")
+        print("\n Échec de la création de l'admin")
         sys.exit(1)
 
 if __name__ == "__main__":

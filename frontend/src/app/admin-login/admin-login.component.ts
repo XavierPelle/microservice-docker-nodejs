@@ -36,11 +36,11 @@ export class AdminLoginComponent {
         this.isLoading = false;
         console.log('Login admin réussi:', response);
 
-        // Stocker le token admin
+        
         localStorage.setItem('admin_token', response.access_token);
         localStorage.setItem('user_role', 'admin');
 
-        // Rediriger vers le dashboard admin
+        
         this.router.navigate(['/admin-dashboard']);
       },
       error: (error) => {

@@ -10,7 +10,7 @@ const sequelize: Sequelize = new Sequelize(dbName, dbUser, dbPassword, {
   dialect: 'postgres',
 });
 
-sequelize.sync({ force: false })
+sequelize.sync({ force: true })
   .then(() => {
     console.log('La base de données et la table sont synchronisées et recréées à chaque démarrage.');
   })

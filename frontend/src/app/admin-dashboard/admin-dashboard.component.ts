@@ -11,15 +11,15 @@ import { Router } from '@angular/router';
   templateUrl: './admin-dashboard.component.html'
 })
 export class AdminDashboardComponent implements OnInit {
-  // Onglets
+  
   activeTab: string = 'dashboard';
 
-  // Stats globales
+
   stats: any = null;
   loadingStats: boolean = true;
   statsError: string = '';
 
-  // Gestion des admins
+  
   admins: any[] = [];
   loadingAdmins: boolean = true;
   adminsError: string = '';
@@ -34,7 +34,6 @@ export class AdminDashboardComponent implements OnInit {
   addAdminForm = { firstName: '', lastName: '', email: '', password: '' };
   addAdminMessage: string = '';
 
-  // Gestion des vendeurs
   vendors: any[] = [];
   loadingVendors: boolean = true;
   vendorsError: string = '';
@@ -43,7 +42,7 @@ export class AdminDashboardComponent implements OnInit {
   showVendorForm: boolean = false;
   vendorForm = { firstName: '', lastName: '', email: '', password: '', storeName: '', storeDescription: '' };
 
-  // Gestion des utilisateurs
+  
   users: any[] = [];
   loadingUsers: boolean = true;
   usersError: string = '';
@@ -52,7 +51,7 @@ export class AdminDashboardComponent implements OnInit {
   showUserForm: boolean = false;
   userForm = { firstName: '', lastName: '', email: '', role: 'user', password: '' };
 
-  // Gestion des produits
+ 
   products: any[] = [];
   loadingProducts: boolean = true;
   productsError: string = '';
@@ -71,12 +70,12 @@ export class AdminDashboardComponent implements OnInit {
     this.loadProducts();
   }
 
-  // Navigation entre onglets
+
   setActiveTab(tab: string) {
     this.activeTab = tab;
   }
 
-  // ===== DASHBOARD =====
+
   loadStats() {
     this.loadingStats = true;
     this.adminService.getDashboardStats().subscribe({
@@ -90,7 +89,7 @@ export class AdminDashboardComponent implements OnInit {
     });
   }
 
-  // ===== GESTION DES ADMINS =====
+ 
   loadAdmins() {
     this.loadingAdmins = true;
     // Au lieu d'appeler getAllAdmins(), on filtre les utilisateurs avec le rôle admin
@@ -281,7 +280,7 @@ export class AdminDashboardComponent implements OnInit {
     });
   }
 
-  // ===== GESTION DES UTILISATEURS =====
+  
   loadUsers() {
     this.loadingUsers = true;
     this.adminService.getAllUsers().subscribe({
@@ -358,7 +357,7 @@ export class AdminDashboardComponent implements OnInit {
     }
   }
 
-  // ===== GESTION DES PRODUITS =====
+  
   loadProducts() {
     this.loadingProducts = true;
     this.adminService.getAllProducts().subscribe({
@@ -433,7 +432,7 @@ export class AdminDashboardComponent implements OnInit {
     }
   }
 
-  // Utilitaires
+  
   getStatusColor(status: string): string {
     switch (status) {
       case 'approved': return 'text-green-600 bg-green-100';
@@ -452,7 +451,6 @@ export class AdminDashboardComponent implements OnInit {
     }
   }
 
-  // Déconnexion admin
   logout() {
     localStorage.removeItem('admin_token');
     localStorage.removeItem('user_role');

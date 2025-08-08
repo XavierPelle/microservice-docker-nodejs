@@ -52,4 +52,4 @@ Lancer le scipt avec cd backend/scripts et python create-admin.py
 
 docker exec -it db_user-service psql -U main -d db_user-service pour ouvrir une table et voir dedans 
 docker exec -it db_vendor-service psql -U main -d db_vendor-service pou rle vendor
-docker exec -it db_vendor-service psql -U main -d db_vendor-service select * from products, pour produit 
+docker exec -it db_vendor-service psql -U main -d db_vendor-service select * from products, pour produit

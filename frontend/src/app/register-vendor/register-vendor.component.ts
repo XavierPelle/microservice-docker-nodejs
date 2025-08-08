@@ -57,7 +57,12 @@ export class RegisterVendorComponent {
           this.authentificationService.hashPassword(this.user.password, response.salt).then(hashedPassword => {
             this.authentificationService.sendHashedPassword(this.user.email, hashedPassword).subscribe({
               next: () => {
-                this.createVendorUserInVendorService(hashedPassword);
+                // Récupérer l'ID de la table users
+                this.getUserIdFromUserService(this.user.email).then(userId => {
+                  this.createVendorUserInVendorService(hashedPassword, userId);
+                }).catch(() => {
+                  this.error = "Erreur lors de la récupération de l'ID utilisateur";
+                });
               },
               error: () => {
                 this.error = "Erreur lors de l'envoi du mot de passe haché";
@@ -80,12 +85,23 @@ export class RegisterVendorComponent {
     });
   }
 
-  private createVendorUserInVendorService(hashedPassword: string): void {
+  private async getUserIdFromUserService(email: string): Promise<number> {
+    return new Promise((resolve, reject) => {
+      this.http.get(`http://localhost:5001/users/${email}`)
+      .subscribe({
+        next: (user: any) => resolve(user.id),
+        error: (error) => reject(error)
+      });
+    });
+  }
+
+  private createVendorUserInVendorService(hashedPassword: string, userServiceId: number): void {
     const vendorUserData = {
       firstName: this.user.firstName,
       lastName: this.user.lastName,
       email: this.user.email,
       password: hashedPassword,
+      userServiceId: userServiceId, // Nouveau : ID de la table users
       salt: '',
       role: 'vendor'
     };

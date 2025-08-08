@@ -28,6 +28,12 @@ VendorUser.init({
         type: DataTypes.STRING(255),
         allowNull: false
     },
+    userServiceId: {
+        type: DataTypes.INTEGER,
+        allowNull: true, // Nullable pour compatibilité avec données existantes
+        unique: true,
+        comment: 'ID de référence vers la table users du user-service'
+    },
     role: {
         type: DataTypes.STRING(20),
         defaultValue: 'vendor'

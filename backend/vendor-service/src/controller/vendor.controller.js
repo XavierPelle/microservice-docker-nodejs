@@ -181,19 +181,30 @@ class VendorController {
 
     async getVendorByUserId(req, res) {
         try {
-            const userId = req.params.userId;
-            const vendor = await Vendor.findOne({ where: { vendorUserId: userId } });
+            const userServiceId = req.params.userId; // ID de la table users
+            
+            // Étape 1 : Trouver vendor_users par userServiceId
+            const vendorUser = await VendorUser.findOne({ 
+                where: { userServiceId: userServiceId } 
+            });
+            
+            if (!vendorUser) {
+                return res.status(404).json({ message: "Vendor user not found" });
+            }
+            
+            // Étape 2 : Trouver vendor par vendorUserId
+            const vendor = await Vendor.findOne({ 
+                where: { vendorUserId: vendorUser.id } 
+            });
+            
             if (!vendor) {
                 return res.status(404).json({ message: "Vendor not found" });
             }
-            // Récupérer les infos utilisateur associées
-            try {
-                const userResponse = await VendorUser.findByPk(userId);
-                res.json({ ...vendor.toJSON(), vendorUser: userResponse });
-            } catch (error) {
-                res.json(vendor);
-            }
+            
+            // Retourner les données du vendeur avec les infos utilisateur
+            res.json({ ...vendor.toJSON(), vendorUser: vendorUser });
         } catch (error) {
+            console.error('Get vendor by userId error:', error);
             res.status(500).json({ message: 'Failed to fetch vendor by userId.' });
         }
     }

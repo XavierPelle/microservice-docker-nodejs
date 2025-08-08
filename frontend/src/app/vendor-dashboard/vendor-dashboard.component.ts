@@ -12,23 +12,23 @@ import { RequestBuilderService } from '../services/request-builder.service';
   styleUrl: './vendor-dashboard.component.scss'
 })
 export class VendorDashboardComponent implements OnInit {
-  // User and vendor data
+
   vendor: any = null;
   user: any = null;
   loading: boolean = true;
   error: string = '';
 
-  // Dashboard stats
+
   dashboardStats: any = {
     totalRevenue: 0,
     totalProductsSold: 0,
     totalOrders: 0
   };
 
-  // Tab management
+
   activeTab: string = 'overview';
 
-  // Products management
+  
   products: any[] = [];
   loadingProducts: boolean = false;
   showAddProductForm: boolean = false;
@@ -41,11 +41,11 @@ export class VendorDashboardComponent implements OnInit {
     quantity: null
   };
 
-  // Orders management
+
   orders: any[] = [];
   loadingOrders: boolean = false;
 
-  // Settings
+  
   storeInfo: any = {
     name: '',
     description: ''
@@ -53,7 +53,7 @@ export class VendorDashboardComponent implements OnInit {
   updatingStore: boolean = false;
   successMessage: string = '';
 
-  // Ajout des propriétés pour le nom et l'email du vendeur
+
   vendorName: string = '';
   vendorEmail: string = '';
 
@@ -108,14 +108,14 @@ export class VendorDashboardComponent implements OnInit {
     });
   }
 
-  // Tab management
+
   setActiveTab(tab: string): void {
     this.activeTab = tab;
     this.error = '';
     this.successMessage = '';
   }
 
-  // Dashboard stats
+
   loadDashboardStats(): void {
     if (!this.vendor) return;
 
@@ -134,7 +134,7 @@ export class VendorDashboardComponent implements OnInit {
     });
   }
 
-  // Products management
+
   loadProducts(): void {
     if (!this.vendor) return;
 
@@ -246,11 +246,11 @@ export class VendorDashboardComponent implements OnInit {
     };
   }
 
-  // Générer un avatar dynamique basé sur le nom du produit
+
   generateProductAvatar(productName: string): string {
     if (!productName) return '';
 
-    // Prendre les 2 premières lettres du nom
+    
     const initials = productName
       .split(' ')
       .map(word => word.charAt(0))
@@ -258,7 +258,7 @@ export class VendorDashboardComponent implements OnInit {
       .toUpperCase()
       .substring(0, 2);
 
-    // Générer une couleur basée sur le nom
+   
     const colors = [
       '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7',
       '#DDA0DD', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E9'
@@ -266,7 +266,7 @@ export class VendorDashboardComponent implements OnInit {
     const colorIndex = productName.length % colors.length;
     const backgroundColor = colors[colorIndex];
 
-    // Créer un SVG avec les initiales
+ 
     return `data:image/svg+xml;base64,${btoa(`
       <svg width="60" height="60" xmlns="http://www.w3.org/2000/svg">
         <rect width="60" height="60" fill="${backgroundColor}" rx="8"/>
@@ -276,7 +276,7 @@ export class VendorDashboardComponent implements OnInit {
     `)}`;
   }
 
-  // Orders management
+
   loadOrders(): void {
     if (!this.vendor) return;
 
@@ -305,11 +305,11 @@ export class VendorDashboardComponent implements OnInit {
 
   updateOrderStatus(orderId: number, status: string): void {
     console.log('Update order status:', orderId, status);
-    // Implementation for updating order status
+
     this.successMessage = 'Statut de la commande mis à jour !';
   }
 
-  // Settings
+
   loadSettings(): void {
     if (this.vendor) {
       this.storeInfo = {
