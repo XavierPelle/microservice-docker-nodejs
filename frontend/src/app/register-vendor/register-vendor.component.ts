@@ -89,7 +89,7 @@ export class RegisterVendorComponent {
       salt: '',
       role: 'vendor'
     };
-    this.http.post('http://localhost:5006/auth/register', vendorUserData).subscribe({
+    this.requestBuilder.execute('post', '/auth/register', vendorUserData, true).subscribe({
       next: (response: any) => {
         if (response && response.userId) {
           this.createVendorProfileWithVendorUserId(response.userId);
@@ -102,6 +102,7 @@ export class RegisterVendorComponent {
       }
     });
   }
+  
 
   private createVendorProfileWithVendorUserId(vendorUserId: number): void {
     const vendorData = {
@@ -109,7 +110,8 @@ export class RegisterVendorComponent {
       storeName: this.vendorProfile.storeName || `${this.user.firstName} ${this.user.lastName} Store`,
       storeDescription: this.vendorProfile.storeDescription || 'Boutique en ligne'
     };
-    this.http.post('http://localhost:5006/vendors', vendorData).subscribe({
+  
+    this.requestBuilder.execute('post', '/vendors', vendorData, true).subscribe({
       next: () => {
         this.message = "Inscription réussie, veuillez vous connecter.";
         this.resetForm();
@@ -118,7 +120,7 @@ export class RegisterVendorComponent {
         this.error = "Erreur lors de la création du profil vendeur (vendor-service)";
       }
     });
-  }
+  }  
 
   private resetForm(): void {
     this.user = {

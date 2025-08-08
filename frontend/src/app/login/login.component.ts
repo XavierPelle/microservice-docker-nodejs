@@ -28,7 +28,9 @@ export class LoginComponent implements OnInit {
     const userInfo = this.authentificationService.getUserInfo();
     console.log(userInfo)
     if (userInfo) {
-      this.router.navigate(['/']);
+      if (userInfo.role === 'vendor') { this.router.navigate(['/vendor-dashboard']) };
+      if (userInfo.role === 'user') { this.router.navigate(['/user-dashboard']) };
+      if (userInfo.role === 'admin') { this.router.navigate(['/admin-dashboard']) };
     }
   }
 

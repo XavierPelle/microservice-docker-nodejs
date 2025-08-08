@@ -1,3 +1,4 @@
+const upload = require('../middlewares/upload');
 const express = require('express');
 const VendorController = require('../controller/vendor.controller');
 
@@ -15,15 +16,15 @@ router.put('/:id', vendorController.updateVendor);
 router.delete('/:id', vendorController.deleteVendor);
 router.put('/:id/status', vendorController.updateStatus);
 
-// Product management
-// router.get('/:vendorId/products', vendorController.getProducts);
-// router.post('/:vendorId/products', vendorController.createProduct);
-// router.put('/:vendorId/products/:productId', vendorController.updateProduct);
-// router.delete('/:vendorId/products/:productId', vendorController.deleteProduct);
+//Product management
+router.get('/:vendorId/get/products', vendorController.getProducts);
+router.get('/product/:id', vendorController.getProduct);
+router.post('/:vendorId/products',upload.single('image'), vendorController.createProduct);
+router.put('/:vendorId/products/:productId', vendorController.updateProduct);
+router.delete('/:vendorId/products/:productId', vendorController.deleteProduct);
 
 // Dashboard
 router.get('/:vendorId/dashboard', vendorController.getDashboardStats);
 
 router.get('/user/:userId', vendorController.getVendorByUserId);
-
 module.exports = router;

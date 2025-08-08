@@ -8,6 +8,9 @@ const { cartRoutes } = require('./routes/cart.route');
 const { tokenRoutes } = require('./routes/token.route');
 const { adminRoutes } = require('./routes/admin.routes');
 const { vendorRoutes } = require('./routes/vendor.routes');
+const { vendorAuthRoutes } = require('./routes/vendor.auth.routes');
+const { payementRoutes } = require('./routes/payement.routes');
+
 
 const app = express();
 const port = 5000;
@@ -29,6 +32,8 @@ cartRoutes(app);
 tokenRoutes(app);
 adminRoutes(app);
 vendorRoutes(app);
+vendorAuthRoutes(app);
+payementRoutes(app);
 
 app.get('/', (req, res) => res.send('Gateway API'));
 app.listen(port, () => console.log(`api-gateway listening on port ${port}!`));

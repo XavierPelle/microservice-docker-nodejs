@@ -5,6 +5,7 @@ import { AuthentificationService } from '../services/authentification.service';
 import { MatCardModule } from '@angular/material/card';
 import { RequestBuilderService } from '../services/request-builder.service';
 import { Router } from '@angular/router';
+import { CartService } from '../services/cart.service';
 
 @Component({
   selector: 'app-product',
@@ -17,13 +18,13 @@ export class ProductComponent {
 
   productList: Product[] = [];
   userInfo: string = '';
-  imagesrc = 'images/category-thumb-1.jpg';
   errorMsg: string = '';
 
   constructor(
     private authService: AuthentificationService,
     private requestBuilderService: RequestBuilderService,
     private router: Router,
+    private cartService: CartService
   ) { }
 
   ngOnInit(): void {
@@ -51,13 +52,15 @@ export class ProductComponent {
 
   addToCart(product: Product): void {
     const userInfo = this.authService.getUserInfo();
-    const productWithUserId = { ...product, user_id: userInfo.user_id };
-    this.requestBuilderService.execute('post', '/cart/create', productWithUserId).subscribe({
+    const newCartItem = { ...product, user_id: userInfo.user_id, quantity: product.quantity || 1 };
+  
+    this.requestBuilderService.execute('post', '/cart/create', newCartItem).subscribe({
       next: () => {
-        console.log('Ajout au panier réussi', productWithUserId);
+        console.log('Produit ajouté au panier');
+        this.cartService.addItem(newCartItem);
       },
       error: () => {
-        console.error('Erreur lors de l\'ajout au panier');
+        console.error('Erreur lors de l\'ajout au panier.');
       }
     });
   }

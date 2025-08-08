@@ -5,6 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { RequestBuilderService } from '../../services/request-builder.service';
 import { Cart } from '../../models/cart';
+import { CartService } from '../../services/cart.service';
 
 @Component({
   selector: 'app-navbar',
@@ -17,8 +18,9 @@ export class NavbarComponent {
 
   public authStateSubscription: Subscription;
   cart: Cart[] = [];
+  cartSubscription: Subscription | undefined;
 
-  constructor(private authService: AuthentificationService, private router: Router, private requestBuilderService: RequestBuilderService) {
+  constructor(private authService: AuthentificationService, private router: Router, private requestBuilderService: RequestBuilderService, private cartService: CartService) {
     this.authStateSubscription = this.authService.authState$.subscribe((authState: boolean) => {
       console.log('L\'état de l\'authentification a changé :', authState);
     });
@@ -33,13 +35,22 @@ export class NavbarComponent {
 
   ngOnInit(): void {
     const userInfo = this.authService.getUserInfo();
+
     this.requestBuilderService.execute('get', `/cart/find/${userInfo.user_id}`, null, false).subscribe({
-      next: data => {
-        this.cart = data;
+      next: (data: Cart[]) => {
+        this.cartService.setCartItems(data);
       },
       error: () => {
         console.error('Erreur lors du chargement du panier');
       },
+    });
+
+    this.cartSubscription = this.cartService.cartItems$.subscribe(items => {
+      this.cart = items;
+    });
+
+    this.authStateSubscription = this.authService.authState$.subscribe(auth => {
+      console.log('Auth state changed :', auth);
     });
   }
 
@@ -51,6 +62,7 @@ export class NavbarComponent {
     if (this.authStateSubscription) {
       this.authStateSubscription.unsubscribe();
     }
+    this.cartSubscription?.unsubscribe();
   }
 
   goToCart() {

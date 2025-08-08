@@ -3,8 +3,10 @@ const VendorUser = require('../models/VendorUser');
 const Product = require('../models/Product');
 const JWTUtils = require('../utils/jwt.utils');
 
+const path = require('path');
+
 class VendorController {
-    
+
     async getAll(req, res) {
         try {
             const vendors = await Vendor.findAll({
@@ -14,7 +16,7 @@ class VendorController {
                     attributes: ['id', 'firstName', 'lastName', 'email', 'role']
                 }]
             });
-            
+
             res.json(vendors);
         } catch (error) {
             console.error('Get all vendors error:', error);
@@ -25,7 +27,7 @@ class VendorController {
     async createVendor(req, res) {
         try {
             const { vendorUserId, storeName, storeDescription } = req.body;
-            
+
             // Check if vendorUser exists
             const vendorUser = await VendorUser.findByPk(vendorUserId);
             if (!vendorUser) {
@@ -37,13 +39,13 @@ class VendorController {
             if (existingVendor) {
                 return res.status(400).json({ message: 'Vendor already exists for this user' });
             }
-            
+
             const vendor = await Vendor.create({
                 vendorUserId,
                 storeName,
                 storeDescription
             });
-            
+
             res.status(201).json(vendor);
         } catch (error) {
             console.error('Create vendor error:', error);
@@ -61,11 +63,11 @@ class VendorController {
                     attributes: ['id', 'firstName', 'lastName', 'email', 'role']
                 }]
             });
-            
+
             if (!vendor) {
                 return res.status(404).json({ message: 'Vendor not found' });
             }
-            
+
             res.json(vendor);
         } catch (error) {
             console.error('Get vendor error:', error);
@@ -77,7 +79,7 @@ class VendorController {
         try {
             const id = req.params.id;
             const [updated] = await Vendor.update(req.body, { where: { id: id } });
-            
+
             if (updated) {
                 const updatedVendor = await Vendor.findByPk(id, {
                     include: [{
@@ -100,11 +102,11 @@ class VendorController {
         try {
             const id = req.params.id;
             const vendor = await Vendor.findByPk(id);
-            
+
             if (!vendor) {
                 return res.status(404).json({ message: 'Vendor not found' });
             }
-            
+
             await Vendor.destroy({ where: { id: id } });
             res.status(200).json({ message: 'Vendor deleted successfully' });
         } catch (error) {
@@ -117,13 +119,13 @@ class VendorController {
         try {
             const id = req.params.id;
             const { status } = req.body;
-            
+
             if (!['pending', 'approved', 'rejected'].includes(status)) {
                 return res.status(400).json({ message: 'Invalid status value' });
             }
-            
+
             const [updated] = await Vendor.update({ status }, { where: { id: id } });
-            
+
             if (updated) {
                 const updatedVendor = await Vendor.findByPk(id);
                 res.status(200).json(updatedVendor);
@@ -139,7 +141,7 @@ class VendorController {
     async getDashboardStats(req, res) {
         try {
             const vendorId = req.params.vendorId;
-            
+
             // Check if vendor exists
             const vendor = await Vendor.findByPk(vendorId);
             if (!vendor) {
@@ -156,7 +158,7 @@ class VendorController {
                 where: { vendorId: vendorId },
                 attributes: ['price', 'quantity']
             });
-            
+
             const totalRevenue = products.reduce((sum, product) => {
                 return sum + (parseFloat(product.price) * parseInt(product.quantity));
             }, 0);
@@ -200,13 +202,13 @@ class VendorController {
     async getProducts(req, res) {
         try {
             const vendorId = req.params.vendorId;
-            
+
             // Vérifier que le vendeur existe
             const vendor = await Vendor.findByPk(vendorId);
             if (!vendor) {
                 return res.status(404).json({ message: 'Vendeur non trouvé' });
             }
-            
+
             // Récupérer tous les produits du vendeur
             const products = await Product.findAll({
                 where: { vendorId: vendorId },
@@ -216,7 +218,7 @@ class VendorController {
                     attributes: ['id', 'storeName']
                 }]
             });
-            
+
             res.json(products);
         } catch (error) {
             console.error('Get products error:', error);
@@ -224,25 +226,52 @@ class VendorController {
         }
     }
 
+    async getProduct(req, res) {
+        try {
+            const productId = req.params.id;
+
+            // Vérifier que le vendeur existe
+            const product = await Product.findByPk(productId);
+            if (!product) {
+                return res.status(404).json({ message: 'Product non trouvé' });
+            }
+            res.json(product);
+        } catch (error) {
+            console.error('Get products error:', error);
+            res.status(500).json({ message: 'Erreur lors de la récupération des produits' });
+        }
+    }
+
+
     async createProduct(req, res) {
         try {
             const vendorId = req.params.vendorId;
+            console.log(vendorId)
             const { name, description, price, quantity } = req.body;
-            
+
             // Validation des champs obligatoires
             if (!name || !price) {
                 return res.status(400).json({ message: 'Nom et prix obligatoires' });
             }
-            
+
             // Vérifier que le vendeur existe
             const vendor = await Vendor.findByPk(vendorId);
+            console.log(console.log('vendor',vendor)
+            )
+
             if (!vendor) {
                 return res.status(404).json({ message: 'Vendeur non trouvé' });
             }
-            
+
             // Générer une référence unique pour le produit
             const productReference = `PROD-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-            
+
+            // Gérer l'image si présente
+            let imagePath = null;
+            if (req.file) {
+                imagePath = `/uploads/products/${req.file.filename}`;
+            }
+
             // Créer le produit
             const product = await Product.create({
                 name,
@@ -250,9 +279,10 @@ class VendorController {
                 price: parseFloat(price),
                 quantity: quantity || 0,
                 productReference,
-                vendorId: parseInt(vendorId)
+                vendorId: parseInt(vendorId),
+                image: imagePath
             });
-            
+
             res.status(201).json(product);
         } catch (error) {
             console.error('Create product error:', error);
@@ -260,24 +290,25 @@ class VendorController {
         }
     }
 
+
     async updateProduct(req, res) {
         try {
             const vendorId = req.params.vendorId;
             const productId = req.params.productId;
             const { name, description, price, quantity } = req.body;
-            
+
             // Vérifier que le produit existe et appartient au vendeur
             const product = await Product.findOne({
-                where: { 
+                where: {
                     id: productId,
-                    vendorId: vendorId 
+                    vendorId: vendorId
                 }
             });
-            
+
             if (!product) {
                 return res.status(404).json({ message: 'Produit non trouvé' });
             }
-            
+
             // Mettre à jour le produit
             await product.update({
                 name: name || product.name,
@@ -285,7 +316,7 @@ class VendorController {
                 price: price ? parseFloat(price) : product.price,
                 quantity: quantity !== undefined ? parseInt(quantity) : product.quantity
             });
-            
+
             res.json(product);
         } catch (error) {
             console.error('Update product error:', error);
@@ -297,22 +328,22 @@ class VendorController {
         try {
             const vendorId = req.params.vendorId;
             const productId = req.params.productId;
-            
+
             // Vérifier que le produit existe et appartient au vendeur
             const product = await Product.findOne({
-                where: { 
+                where: {
                     id: productId,
-                    vendorId: vendorId 
+                    vendorId: vendorId
                 }
             });
-            
+
             if (!product) {
                 return res.status(404).json({ message: 'Produit non trouvé' });
             }
-            
+
             // Supprimer le produit
             await product.destroy();
-            
+
             res.json({ message: 'Produit supprimé avec succès' });
         } catch (error) {
             console.error('Delete product error:', error);

@@ -33,6 +33,10 @@ Product.init({
         allowNull: false,
         unique: true
     },
+    image: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
     vendorId: {
         type: DataTypes.INTEGER,
         allowNull: false,

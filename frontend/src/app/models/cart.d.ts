@@ -2,9 +2,9 @@
 export interface Cart {
 	id?: number;
 	user_id?: number;
-	id_cart: number;
-	name: string;
+	id_cart?: number;
+	name?: string;
 	price: number;
-	productReference: string;
+	productReference?: string;
 	quantity: number;
 }

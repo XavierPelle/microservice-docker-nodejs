@@ -56,6 +56,10 @@ export class AdminService {
     return this.requestBuilder.execute('get', '/admin/vendors', null, true);
   }
 
+  createVendor(vendorData: any): Observable<any> {
+    return this.requestBuilder.execute('post', '/admin/vendors', vendorData, true);
+  }
+
   approveVendor(vendorId: number): Observable<any> {
     return this.requestBuilder.execute('put', `/admin/vendors/${vendorId}`, { status: 'approved' }, true);
   }
@@ -66,6 +70,10 @@ export class AdminService {
 
   updateVendorStatus(vendorId: number, status: string): Observable<any> {
     return this.requestBuilder.execute('put', `/admin/vendors/${vendorId}`, { status }, true);
+  }
+
+  deleteVendor(vendorId: number): Observable<any> {
+    return this.requestBuilder.execute('delete', `/admin/vendors/${vendorId}`, null, true);
   }
 
   // ===== GESTION DES UTILISATEURS =====
@@ -81,9 +89,17 @@ export class AdminService {
     return this.requestBuilder.execute('delete', `/admin/users/${userId}`, null, true);
   }
 
+  createUser(userData: any) {
+    return this.requestBuilder.execute('post', '/admin/users', userData, true);
+  }
+
   // ===== GESTION DES PRODUITS =====
   getAllProducts(): Observable<any[]> {
     return this.requestBuilder.execute('get', '/admin/products', null, true);
+  }
+
+  createProduct(productData: any): Observable<any> {
+    return this.requestBuilder.execute('post', '/admin/products', productData, true);
   }
 
   updateProduct(productId: number, productData: any): Observable<any> {

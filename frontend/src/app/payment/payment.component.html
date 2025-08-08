@@ -1,21 +1,148 @@
-<section class="payment-section">
-  <div class="container">
-    <h2>Paiement</h2>
-    <form (ngSubmit)="submitPayment()" #paymentForm="ngForm">
-      <div class="form-group">
-        <label for="amount">Montant</label>
-        <input type="number" id="amount" name="amount" [(ngModel)]="payment.amount" required min="0.01" step="0.01" />
+<div class="payment-container">
+
+  <!-- Contenu principal -->
+  <div class="payment-content">
+    <!-- En-tête -->
+    <div class="payment-header">
+      <div class="payment-icon">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M2 12C2 8.229 2 6.343 3.172 5.172C4.343 4 6.229 4 10 4H14C17.771 4 19.657 4 20.828 5.172C22 6.343 22 8.229 22 12C22 15.771 22 17.657 20.828 18.828C19.657 20 17.771 20 14 20H10C6.229 20 4.343 20 3.172 18.828C2 17.657 2 15.771 2 12Z" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M10 16H6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M14 16H12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M2 10L22 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
       </div>
-      <div class="form-group">
-        <label for="method">Méthode de paiement</label>
-        <select id="method" name="method" [(ngModel)]="payment.method" required>
-          <option value="" disabled selected>Choisir...</option>
-          <option value="card">Carte bancaire</option>
-          <option value="paypal">PayPal</option>
-        </select>
+      <h1 class="payment-title">Finaliser le Paiement</h1>
+      <p class="payment-subtitle">Sécurisé et rapide</p>
+    </div>
+
+    <!-- Carte de paiement -->
+    <div class="payment-card">
+      <form (ngSubmit)="submitPayment()" #paymentForm="ngForm" class="payment-form">
+
+        <!-- Montant -->
+        <div class="form-section">
+          <div class="amount-display">
+            <div class="currency-symbol">€</div>
+            <div class="amount-value">{{ payment.amount || '0.00' }}</div>
+          </div>
+          <div class="form-group">
+            <label for="amount" class="form-label">
+              <svg class="label-icon" viewBox="0 0 24 24" fill="none">
+                <path d="M12 2V22M17 5H9.5C8.11929 5 7 6.11929 7 7.5C7 8.88071 8.11929 10 9.5 10H14.5C15.8807 10 17 11.1193 17 12.5C17 13.8807 15.8807 15 14.5 15H7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Montant
+            </label>
+            <input
+              type="number"
+              id="amount"
+              name="amount"
+              [(ngModel)]="payment.amount"
+              required
+              min="0.01"
+              step="0.01"
+              class="form-input amount-input"
+              placeholder="0.00"
+            />
+          </div>
+        </div>
+
+        <!-- Méthode de paiement -->
+        <div class="form-section">
+          <label class="form-label">
+            <svg class="label-icon" viewBox="0 0 24 24" fill="none">
+              <path d="M3 10H21M7 15H10M17 15H17.01M3 6H21C21.5523 6 22 6.44772 22 7V17C22 17.5523 21.5523 18 21 18H3C2.44772 18 2 17.5523 2 17V7C2 6.44772 2.44772 6 3 6Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Méthode de paiement
+          </label>
+
+          <div class="payment-methods">
+            <div class="payment-method-option"
+                 [class.selected]="payment.method === 'card'"
+                 (click)="payment.method = 'card'">
+              <div class="method-icon card-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M2 12C2 8.229 2 6.343 3.172 5.172C4.343 4 6.229 4 10 4H14C17.771 4 19.657 4 20.828 5.172C22 6.343 22 8.229 22 12C22 15.771 22 17.657 20.828 18.828C19.657 20 17.771 20 14 20H10C6.229 20 4.343 20 3.172 18.828C2 17.657 2 15.771 2 12Z" stroke="currentColor" stroke-width="1.5"/>
+                  <path d="M10 16H6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                  <path d="M14 16H12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                  <path d="M2 10L22 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <div class="method-info">
+                <div class="method-name">Carte Bancaire</div>
+                <div class="method-desc">Visa, Mastercard, Amex</div>
+              </div>
+              <div class="method-radio">
+                <input type="radio" name="method" value="card" [(ngModel)]="payment.method" required>
+              </div>
+            </div>
+
+            <div class="payment-method-option"
+                 [class.selected]="payment.method === 'paypal'"
+                 (click)="payment.method = 'paypal'">
+              <div class="method-icon paypal-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944 2.28A.64.64 0 0 1 5.572 1.8h8.76c1.925 0 3.469.5 4.632 1.492 1.162.99 1.74 2.457 1.74 4.402 0 1.313-.304 2.508-.912 3.584a7.065 7.065 0 0 1-2.476 2.652c-1.04.65-2.235.975-3.584.975H9.19a.64.64 0 0 0-.633.74l-.24 1.544-.72 4.6a.64.64 0 0 1-.631.548h.11z" stroke="currentColor" stroke-width="1.5"/>
+                </svg>
+              </div>
+              <div class="method-info">
+                <div class="method-name">PayPal</div>
+                <div class="method-desc">Paiement sécurisé</div>
+              </div>
+              <div class="method-radio">
+                <input type="radio" name="method" value="paypal" [(ngModel)]="payment.method" required>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bouton de paiement -->
+        <button
+          type="submit"
+          [disabled]="paymentForm.invalid"
+          class="payment-button"
+          [class.loading]="false">
+          <span class="button-content">
+            <svg class="button-icon" viewBox="0 0 24 24" fill="none">
+              <path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Confirmer le Paiement
+          </span>
+          <div class="button-loader">
+            <div class="spinner"></div>
+          </div>
+        </button>
+
+        <!-- Message de statut -->
+        <div *ngIf="message" class="payment-message" [class.success]="message.includes('réussi') || message.includes('enregistrés')">
+          <div class="message-icon">
+            <svg *ngIf="message.includes('réussi') || message.includes('enregistrés')" viewBox="0 0 24 24" fill="none">
+              <path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <svg *ngIf="!message.includes('réussi') && !message.includes('enregistrés')" viewBox="0 0 24 24" fill="none">
+              <path d="M12 9V13M12 17H12.01M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <span>{{ message }}</span>
+        </div>
+
+      </form>
+    </div>
+
+    <!-- Informations de sécurité -->
+    <div class="security-info">
+      <div class="security-item">
+        <svg class="security-icon" viewBox="0 0 24 24" fill="none">
+          <path d="M12 22S8 18 8 13V6L12 4L16 6V13C16 18 12 22 12 22Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>Paiement sécurisé SSL</span>
       </div>
-      <button type="submit" [disabled]="paymentForm.invalid">Payer</button>
-    </form>
-    <div *ngIf="message" class="payment-message">{{ message }}</div>
+      <div class="security-item">
+        <svg class="security-icon" viewBox="0 0 24 24" fill="none">
+          <path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>Transaction protégée</span>
+      </div>
+    </div>
   </div>
-</section>
+</div>

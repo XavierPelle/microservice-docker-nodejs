@@ -5,7 +5,7 @@ const cors = require('cors');
 const vendorRoutes = require('./routes/vendor.route');
 const authRoutes = require('./routes/auth.route');
 const sequelize = require('./config/database');
-
+const path = require('path');
 // Import des modèles pour la synchronisation
 require('./models/VendorUser');
 require('./models/Vendor');
@@ -18,6 +18,7 @@ const port = process.env.PORT || 5006;
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(cors());
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use('/vendors', vendorRoutes);
 app.use('/auth', authRoutes);

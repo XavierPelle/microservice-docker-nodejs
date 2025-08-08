@@ -1,5 +1,5 @@
 const { createProxyMiddleware } = require('http-proxy-middleware');
-const { USER_API_URL, PRODUCT_API_URL, TRANSACTION_HISTOY_API_URL, AUTH_API_URL, CART_API_URL, TOKEN_API_URL, ADMIN_API_URL, VENDOR_API_URL } = require('../microserviceURL/microserviceUrl');
+const { PAYEMENT_API_URL, USER_API_URL, PRODUCT_API_URL, TRANSACTION_HISTOY_API_URL, AUTH_API_URL, CART_API_URL, TOKEN_API_URL, ADMIN_API_URL, VENDOR_API_URL } = require('../microserviceURL/microserviceUrl');
 
 const optionsUser = {
   target: USER_API_URL,
@@ -81,6 +81,16 @@ const optionsVendor = {
   },
 };
 
+const optionsPayement = {
+  target: PAYEMENT_API_URL,
+  changeOrigin: true,
+  logger: console,
+  onError: (err, req, res) => {
+    console.error(`Payement Proxy Error: ${err.message}`);
+    res.status(500).send('Something went wrong with the payement service.');
+  },
+};
+
 const userProxy = createProxyMiddleware(optionsUser);
 const productProxy = createProxyMiddleware(optionsProduct);
 const transactionHistoryProxy = createProxyMiddleware(optionsTransactionHistory);
@@ -89,6 +99,7 @@ const cartProxy = createProxyMiddleware(optionsCart);
 const tokenProxy = createProxyMiddleware(optionsToken);
 const adminProxy = createProxyMiddleware(optionsAdmin);
 const vendorProxy = createProxyMiddleware(optionsVendor);
+const payementProxy = createProxyMiddleware(optionsPayement);
 
 module.exports = {
   userProxy,
@@ -98,5 +109,6 @@ module.exports = {
   cartProxy,
   tokenProxy,
   adminProxy,
-  vendorProxy
+  vendorProxy,
+  payementProxy
 };

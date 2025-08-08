@@ -68,6 +68,7 @@ export class VendorDashboardComponent implements OnInit {
 
   loadVendorData(): void {
     this.user = this.authService.getUserInfo();
+    console.log(this.user)
     if (!this.user || !this.user.user_id) {
       this.error = 'Utilisateur non connecté.';
       this.loading = false;
@@ -80,7 +81,7 @@ export class VendorDashboardComponent implements OnInit {
       return;
     }
 
-    this.requestBuilder.execute('get', `/vendors/user/${this.user.user_id}`, null, true).subscribe({
+    this.requestBuilder.execute('get', `/vendors/user/${this.user.user_id}`, ).subscribe({
       next: (vendor: any) => {
         this.vendor = vendor;
         this.loading = false;
@@ -138,7 +139,7 @@ export class VendorDashboardComponent implements OnInit {
     if (!this.vendor) return;
 
     this.loadingProducts = true;
-    this.requestBuilder.execute('get', `/vendors/${this.vendor.id}/products`, null, true).subscribe({
+    this.requestBuilder.execute('get', `/vendors/${this.vendor.id}/get/products`, null, true).subscribe({
       next: (products: any[]) => {
         this.products = products;
         this.loadingProducts = false;
@@ -166,24 +167,41 @@ export class VendorDashboardComponent implements OnInit {
     });
   }
 
+  imageFile: File | null = null;
+
+  onImageSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      this.imageFile = file;
+    }
+  }
+
+
   addProduct(): void {
     if (!this.vendor || !this.newProduct.name || !this.newProduct.price || !this.newProduct.quantity) {
       this.error = 'Veuillez remplir tous les champs obligatoires.';
       return;
     }
-
+  
     this.addingProduct = true;
     this.error = '';
-
-    const productData = {
-      ...this.newProduct,
-      vendor_id: this.vendor.id
-    };
-
-    this.requestBuilder.execute('post', `/vendors/${this.vendor.id}/products`, productData, true).subscribe({
+  
+    const formData = new FormData();
+    formData.append('name', this.newProduct.name);
+    formData.append('description', this.newProduct.description);
+    formData.append('price', this.newProduct.price);
+    formData.append('quantity', this.newProduct.quantity);
+    formData.append('vendor_id', this.vendor.id);
+  
+    if (this.imageFile) {
+      formData.append('image', this.imageFile);
+    }
+    console.log(this.vendor.id)
+    this.requestBuilder.execute('post', `/vendors/${this.vendor.id}/products`, formData, true).subscribe({
       next: () => {
         this.showAddProductForm = false;
         this.resetNewProduct();
+        this.imageFile = null;
         this.loadProducts();
         this.successMessage = 'Produit ajouté avec succès !';
         this.addingProduct = false;
@@ -194,6 +212,7 @@ export class VendorDashboardComponent implements OnInit {
       }
     });
   }
+  
 
   deleteProduct(productId: number): void {
     if (!this.vendor) return;

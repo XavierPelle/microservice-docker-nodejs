@@ -5,6 +5,8 @@ const axios = require('axios');
     try {
         const { user_id, amount, method } = req.body;
         const payment = await Payement.create({ user_id, amount, method });
+
+        console.log(payment)
         res.status(201).json(payment);
     } catch (error) {
         res.status(500).json({ message: 'Erreur lors de la création du paiement' });

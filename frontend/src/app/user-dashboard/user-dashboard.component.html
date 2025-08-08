@@ -326,7 +326,7 @@
   <!-- Main Content -->
   <div class="main-content">
     <div *ngIf="user" class="welcome">
-      Bonjour, {{ user.firstName }} !
+      Bonjour, {{ user.first_name }} !
     </div>
     <!-- Profile Tab -->
     <div *ngIf="activeTab === 'profile'">
@@ -337,11 +337,11 @@
       <div class="content-card" *ngIf="user; else noUser">
         <div class="form-group">
           <label class="form-label">Prénom</label>
-          <input type="text" class="form-input" [(ngModel)]="editUser.firstName" placeholder="Votre prénom">
+          <input type="text" class="form-input" [(ngModel)]="editUser.first_name" placeholder="Votre prénom">
         </div>
         <div class="form-group">
           <label class="form-label">Nom</label>
-          <input type="text" class="form-input" [(ngModel)]="editUser.lastName" placeholder="Votre nom">
+          <input type="text" class="form-input" [(ngModel)]="editUser.last_name" placeholder="Votre nom">
         </div>
         <div class="form-group">
           <label class="form-label">Email</label>
@@ -392,8 +392,12 @@
             <div class="transaction-details">
               <strong>{{ transaction.productName }}</strong> - 
               Quantité: {{ transaction.quantity }} - 
-              Prix: {{ transaction.price }}€
+              Prix: {{ transaction.price }}€ -
+              Référence: {{ transaction.productReference }}
             </div>
+            <button (click)="generatePdf(transaction)" class="btn btn-sm btn-primary mt-2">
+              🖨️ Imprimer le PDF
+            </button>
           </div>
         </div>
       </div>
