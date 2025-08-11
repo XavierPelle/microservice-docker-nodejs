@@ -1,4 +1,4 @@
-# 🛒 Amazon-like E-commerce Microservices Platform
+# 🛒 Amazur: Amazon-like E-commerce Microservices Platform
 
 [![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
 [![Node.js](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
